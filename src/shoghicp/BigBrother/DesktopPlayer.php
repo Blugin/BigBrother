@@ -198,7 +198,12 @@ class DesktopPlayer extends Player{
 			unset($this->bigBrother_entitylist[$eid]);
 		}
 	}
-
+	
+	public function sendMessage($msg) {
+		if(is_string($msg)) if(!isset(json_decode(BigBrother::toJSON($msg),true)['text'])) return true;
+		parent::sendMessage($msg);
+	}
+	
 	/**
 	 * @return array
 	 */
@@ -517,6 +522,7 @@ class DesktopPlayer extends Player{
 			$pk->locale = "en_US";
 			$pk->skipVerification = true;
 			$pk->clientData["SkinGeometry"] = "";//TODO
+			$pk->clientData["DeviceModel"] = "PC";
 
 			if($model){
 				$pk->clientData["SkinId"] = $this->bigBrother_formatedUUID."_CustomSlim";
