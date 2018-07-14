@@ -1407,20 +1407,20 @@ class Translator{
 					$pk->x = $packet->position->x;
 					$pk->y = $packet->position->y - $baseOffset;
 					$pk->z = $packet->position->z;
-					$pk->yaw = $packet->yaw;
+					$pk->yaw = $packet->xRot;
 					$pk->pitch = $packet->pitch;
 					$packets[] = $pk;
 
 					$pk = new EntityLookPacket();
 					$pk->eid = $packet->entityRuntimeId;
-					$pk->yaw = $packet->headYaw;
-					$pk->pitch = $packet->pitch;
+					$pk->yaw = $packet->xRot;
+					$pk->pitch = 0;
 					$pk->onGround = $packet->onGround;
 					$packets[] = $pk;
 
 					$pk = new EntityHeadLookPacket();
 					$pk->eid = $packet->entityRuntimeId;
-					$pk->yaw = $packet->headYaw;
+					$pk->yaw = $packet->xRot;
 					$packets[] = $pk;
 
 					return $packets;
