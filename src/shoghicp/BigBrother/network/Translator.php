@@ -1408,7 +1408,7 @@ class Translator{
 					$pk->y = $packet->position->y - $baseOffset;
 					$pk->z = $packet->position->z;
 					$pk->yaw = $packet->xRot;
-					$pk->pitch = $packet->0; //TODO fix
+					$pk->pitch = 0; //TODO fix
 					$packets[] = $pk;
 
 					$pk = new EntityLookPacket();
