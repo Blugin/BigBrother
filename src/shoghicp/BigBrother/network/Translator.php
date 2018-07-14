@@ -1379,7 +1379,7 @@ class Translator{
 
 				return $pk;
 
-			case Info::MOVE_ENTITY_PACKET:
+			case Info::MOVE_ENTITY_ABSOLUTE_PACKET:
 				if($packet->entityRuntimeId === $player->getId()){//TODO
 					return null;
 				}else{
