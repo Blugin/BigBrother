@@ -42,7 +42,7 @@ use pocketmine\network\mcpe\protocol\RequestChunkRadiusPacket;
 use pocketmine\network\mcpe\protocol\ResourcePackClientResponsePacket;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\BatchPacket;
-use pocketmine\network\SourceInterface;
+use pocketmine\network\NetworkInterface;
 use pocketmine\level\Level;
 use pocketmine\level\format\Chunk;
 use pocketmine\timings\Timings;
@@ -112,13 +112,13 @@ class DesktopPlayer extends Player{
 	protected $plugin;
 
 	/**
-	 * @param SourceInterface $interface
+	 * @param NetworkInterface $interface
 	 * @param string          $clientID
 	 * @param string          $address
 	 * @param int             $port
 	 * @param BigBrother      $plugin
 	 */
-	public function __construct(SourceInterface $interface, string $clientID, string $address, int $port, BigBrother $plugin){
+	public function __construct(NetworkInterface $interface, string $clientID, string $address, int $port, BigBrother $plugin){
 		$this->plugin = $plugin;
 		$this->bigbrother_clientId = $clientID;
 		parent::__construct($interface, $address, $port);

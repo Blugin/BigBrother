@@ -30,7 +30,7 @@ declare(strict_types=1);
 namespace shoghicp\BigBrother\network;
 
 use pocketmine\network\mcpe\protocol\DataPacket;
-use pocketmine\network\SourceInterface;
+use pocketmine\network\NetworkInterface;
 use pocketmine\Server;
 use pocketmine\Player;
 use pocketmine\utils\MainLogger;
@@ -68,7 +68,7 @@ use shoghicp\BigBrother\network\protocol\Play\Client\UseEntityPacket;
 use shoghicp\BigBrother\network\protocol\Play\Client\UseItemPacket;
 use shoghicp\BigBrother\utils\Binary;
 
-class ProtocolInterface implements SourceInterface{
+class ProtocolInterface implements NetworkInterface{
 
 	/** @var BigBrother */
 	protected $plugin;
