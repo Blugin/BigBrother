@@ -30,15 +30,18 @@ declare(strict_types=1);
 namespace shoghicp\BigBrother\network;
 
 class ServerThread extends \Thread{
-
 	/** @var int */
 	protected $port;
+
 	/** @var string */
 	protected $interface;
+
 	/** @var \ThreadedLogger */
 	protected $logger;
+
 	/** @var \ClassLoader */
 	protected $loader;
+
 	/** @var string */
 	protected $data;
 
@@ -49,14 +52,10 @@ class ServerThread extends \Thread{
 	protected $shutdown;
 
 	/** @var \Threaded */
-	protected $externalQueue;
-	/** @var \Threaded */
-	protected $internalQueue;
+	protected $externalQueue, $internalQueue;
 
 	/** @var resource */
-	protected $externalSocket;
-	/** @var resource */
-	protected $internalSocket;
+	protected $externalSocket, $internalSocket;
 
 	/**
 	 * @param \ThreadedLogger $logger
@@ -79,9 +78,9 @@ class ServerThread extends \Thread{
 		$this->loader = $loader;
 
 		$this->data = serialize([
-			"motd" => $motd,
-			"icon" => $icon
-		]);
+															"motd" => $motd,
+															"icon" => $icon
+														]);
 
 		$loadPaths = [];
 		$this->addDependency($loadPaths, new \ReflectionClass($logger));
@@ -93,7 +92,7 @@ class ServerThread extends \Thread{
 		$this->internalQueue = new \Threaded;
 
 		if(($sockets = stream_socket_pair((strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? STREAM_PF_INET : STREAM_PF_UNIX), STREAM_SOCK_STREAM, STREAM_IPPROTO_IP)) === false){
-			throw new \Exception("Could not create IPC streams. Reason: ".socket_strerror(socket_last_error()));
+			throw new \Exception("Could not create IPC streams. Reason: " . socket_strerror(socket_last_error()));
 		}
 
 		$this->internalSocket = $sockets[0];
@@ -208,7 +207,7 @@ class ServerThread extends \Thread{
 
 	public function shutdownHandler() : void{
 		if($this->shutdown !== true){
-			$this->getLogger()->emergency("[ServerThread #". \Thread::getCurrentThreadId() ."] ServerThread crashed!");
+			$this->getLogger()->emergency("[ServerThread #" . \Thread::getCurrentThreadId() . "] ServerThread crashed!");
 		}
 	}
 

@@ -29,28 +29,30 @@ declare(strict_types=1);
 
 namespace shoghicp\BigBrother\network\protocol\Play\Server;
 
+use pocketmine\nbt\tag\IntTag;
+use pocketmine\nbt\tag\ShortTag;
+use pocketmine\nbt\tag\StringTag;
+use pocketmine\tile\Tile;
+use shoghicp\BigBrother\BigBrother;
 use shoghicp\BigBrother\network\OutboundPacket;
 use shoghicp\BigBrother\utils\ConvertUtils;
-use shoghicp\BigBrother\BigBrother;
-use pocketmine\tile\Tile;
-use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\StringTag;
-use pocketmine\nbt\tag\ShortTag;
 
 class ChunkDataPacket extends OutboundPacket{
+	/** @var int */
+	public $chunkX, $chunkZ;
 
-	/** @var int */
-	public $chunkX;
-	/** @var int */
-	public $chunkZ;
 	/** @var bool */
 	public $groundUp;
+
 	/** @var int */
 	public $primaryBitmap;
+
 	/** @var string */
 	public $payload;
+
 	/** @var string */
 	public $biomes;
+
 	/** @var array */
 	public $blockEntities = [];
 
@@ -64,7 +66,7 @@ class ChunkDataPacket extends OutboundPacket{
 		$this->putBool($this->groundUp);
 		$this->putVarInt($this->primaryBitmap);
 		if($this->groundUp){
-			$this->putVarInt(strlen($this->payload.$this->biomes));
+			$this->putVarInt(strlen($this->payload . $this->biomes));
 			$this->put($this->payload);
 			$this->put($this->biomes);
 		}else{
@@ -79,7 +81,7 @@ class ChunkDataPacket extends OutboundPacket{
 					$blockEntity->setTag(new IntTag("Data", $blockEntity["mData"]));
 
 					$blockEntity->removeTag("item", "mdata");
-				break;
+					break;
 				case Tile::SIGN:
 					$textData = explode("\n", $blockEntity["Text"]);
 
@@ -89,7 +91,7 @@ class ChunkDataPacket extends OutboundPacket{
 					$blockEntity->setTag(new StringTag("Text4", BigBrother::toJSON($textData[3])));
 
 					$blockEntity->removeTag("Text");
-				break;
+					break;
 			}
 
 			$this->put(ConvertUtils::convertNBTDataFromPEtoPC($blockEntity));

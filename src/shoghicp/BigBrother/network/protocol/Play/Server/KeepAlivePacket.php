@@ -32,7 +32,6 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class KeepAlivePacket extends OutboundPacket{
-
 	/** @var int */
 	public $id;
 

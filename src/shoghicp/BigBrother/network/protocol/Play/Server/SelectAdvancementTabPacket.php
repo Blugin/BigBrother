@@ -32,9 +32,9 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class SelectAdvancementTabPacket extends OutboundPacket{
-
 	/** @var bool */
 	public $hasTab = false;
+
 	/** @var string */
 	public $tabId = "";
 

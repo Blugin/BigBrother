@@ -32,22 +32,18 @@ namespace shoghicp\BigBrother\network\protocol\Play\Client;
 use shoghicp\BigBrother\network\InboundPacket;
 
 class UseEntityPacket extends InboundPacket{
-
-	const INTERACT    = 0;
-	const ATTACK      = 1;
+	const INTERACT = 0;
+	const ATTACK = 1;
 	const INTERACT_AT = 2;
 
 	/** @var int */
 	public $target;
+
 	/** @var int */
 	public $type;
 
 	/** @var float */
-	public $targetX;
-	/** @var float */
-	public $targetY;
-	/** @var float */
-	public $targetZ;
+	public $targetX, $targetY, $targetZ;
 
 	/** @var int */
 	public $hand;

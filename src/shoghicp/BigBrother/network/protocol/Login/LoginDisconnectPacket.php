@@ -32,7 +32,6 @@ namespace shoghicp\BigBrother\network\protocol\Login;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class LoginDisconnectPacket extends OutboundPacket{
-
 	/** @var string */
 	public $reason;
 

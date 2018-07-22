@@ -38,7 +38,7 @@ class PNGUtils{
 	private $isPalette = false, $palette = [];
 	private $bitDepth = 8, $colorType = 6, $isAlpha = true;
 	private $compressionMethod = 0, $filterMethod = 0, $interlaceMethod = 0;
-	private $pixeldata = [[[0,0,0,255]]];
+	private $pixeldata = [[[0, 0, 0, 255]]];
 	private $rawimagedata = "";
 	private $usedBit = 0, $usedBitNum = 0;
 
@@ -86,12 +86,12 @@ class PNGUtils{
 				case "IDAT":
 				case "IEND":
 				case "tRNS":
-					$chunkType = "read".$chunkType;
+					$chunkType = "read" . $chunkType;
 					$this->$chunkType($length);
-				break;
+					break;
 				default:
 					$this->stream->offset += $length;
-				break;
+					break;
 			}
 
 			$crc = $this->stream->getInt();
@@ -136,7 +136,7 @@ class PNGUtils{
 	private function readtRNS($length){
 		switch($this->colorType){
 			/*case 0:
-				
+
 			break;
 			case 2:
 
@@ -145,11 +145,11 @@ class PNGUtils{
 				for($i = 0; $i < $length; $i++){
 					$this->palette[$i][3] = $this->stream->getByte();
 				}
-			break;
+				break;
 			default:
-				echo "Sorry, i can't parse png file. readtRNS: ".$this->colorType."\n";
+				echo "Sorry, i can't parse png file. readtRNS: " . $this->colorType . "\n";
 				echo "Report to BigBrotherTeam!\n";
-			break;
+				break;
 		}
 	}
 
@@ -183,21 +183,21 @@ class PNGUtils{
 
 					switch($filterMethod){
 						case 0://none
-						break;
+							break;
 						case 1:
 							$left = $this->getRGBA($height, $width - 1);
 							$r = ($r + $left[0]) % 256;
 							$g = ($g + $left[1]) % 256;
 							$b = ($b + $left[2]) % 256;
 							$a = ($a + $left[3]) % 256;
-						break;
+							break;
 						case 2:
 							$above = $this->getRGBA($height - 1, $width);
 							$r = ($r + $above[0]) % 256;
 							$g = ($g + $above[1]) % 256;
 							$b = ($b + $above[2]) % 256;
 							$a = ($a + $above[3]) % 256;
-						break;
+							break;
 						case 3:
 							$left = $this->getRGBA($height, $width - 1);
 							$above = $this->getRGBA($height - 1, $width);
@@ -210,7 +210,7 @@ class PNGUtils{
 							$g = ($g + $avrgG) % 256;
 							$b = ($b + $avrgB) % 256;
 							$a = ($a + $avrgA) % 256;
-						break;
+							break;
 						case 4:
 							$left = $this->getRGBA($height, $width - 1);
 							$above = $this->getRGBA($height - 1, $width);
@@ -225,9 +225,9 @@ class PNGUtils{
 							$g = ($g + $paethG) % 256;
 							$b = ($b + $paethB) % 256;
 							$a = ($a + $paethA) % 256;
-						break;
+							break;
 					}
-					
+
 					$this->setRGBA($height, $width, [$r, $g, $b, $a]);
 				}
 			}
@@ -253,17 +253,17 @@ class PNGUtils{
 
 					return $this->usedBit & 0x0f;
 				}
-			break;
+				break;
 			case 8:
 				return $stream->getByte();
-			break;
+				break;
 			case 16:
 				return $stream->getShort();
-			break;
+				break;
 			default:
-				echo "Sorry, i can't parse png file. getData: ".$this->bitDepth."\n";
+				echo "Sorry, i can't parse png file. getData: " . $this->bitDepth . "\n";
 				echo "Report to BigBrotherTeam!\n";
-			break;
+				break;
 		}
 		return 0;
 	}
@@ -277,7 +277,7 @@ class PNGUtils{
 			return $a;
 		}elseif($pb <= $pc){
 			return $b;
- 		}else{
+		}else{
 			return $c;
 		}
 	}
@@ -313,7 +313,7 @@ class PNGUtils{
 			$this->pixeldata[$height] = [];
 
 			for($width = 0; $width < $this->width; $width++){
-				$pixel = [0,0,0,255];
+				$pixel = [0, 0, 0, 255];
 				if(isset($old_pixeldata[$height][$width])){
 					$pixel = $old_pixeldata[$height][$width];
 				}

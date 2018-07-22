@@ -32,9 +32,9 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class AnimatePacket extends OutboundPacket{
-
 	/** @var int */
 	public $eid;
+
 	/** @var int */
 	public $actionID;
 

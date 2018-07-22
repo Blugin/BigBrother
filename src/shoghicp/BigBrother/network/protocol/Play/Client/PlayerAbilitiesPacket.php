@@ -32,13 +32,15 @@ namespace shoghicp\BigBrother\network\protocol\Play\Client;
 use shoghicp\BigBrother\network\InboundPacket;
 
 class PlayerAbilitiesPacket extends InboundPacket{
-
 	/** @var bool */
 	public $damageDisabled = false;
+
 	/** @var bool */
 	public $canFly = false;
+
 	/** @var bool */
 	public $isFlying = false;
+
 	/** @var bool */
 	public $isCreative = false;
 

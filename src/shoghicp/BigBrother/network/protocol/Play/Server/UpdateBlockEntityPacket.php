@@ -29,20 +29,17 @@ declare(strict_types=1);
 
 namespace shoghicp\BigBrother\network\protocol\Play\Server;
 
+use pocketmine\nbt\tag\NamedTag;
 use shoghicp\BigBrother\network\OutboundPacket;
 use shoghicp\BigBrother\utils\ConvertUtils;
-use pocketmine\nbt\tag\NamedTag;
 
 class UpdateBlockEntityPacket extends OutboundPacket{
+	/** @var int */
+	public $x, $y, $z;
 
 	/** @var int */
-	public $x;
-	/** @var int */
-	public $y;
-	/** @var int */
-	public $z;
-	/** @var int */
 	public $actionID;
+
 	/** @var NamedTag */
 	public $namedtag;
 

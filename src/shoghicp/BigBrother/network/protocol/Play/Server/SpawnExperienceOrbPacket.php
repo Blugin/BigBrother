@@ -32,15 +32,12 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class SpawnExperienceOrbPacket extends OutboundPacket{
-
 	/** @var int */
 	public $eid;
+
 	/** @var float */
-	public $x;
-	/** @var float */
-	public $y;
-	/** @var float */
-	public $z;
+	public $x, $y, $z;
+
 	/** @var int */
 	public $count;
 

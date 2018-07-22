@@ -32,17 +32,21 @@ namespace shoghicp\BigBrother\network\protocol\Play\Client;
 use shoghicp\BigBrother\network\InboundPacket;
 
 class ClientSettingsPacket extends InboundPacket{
-
 	/** @var string */
 	public $lang;
+
 	/** @var int */
 	public $view;
+
 	/** @var int */
 	public $chatMode;
+
 	/** @var int */
 	public $chatColor;
+
 	/** @var string */
 	public $skinSetting;
+
 	/** @var int */
 	public $mainHand;
 

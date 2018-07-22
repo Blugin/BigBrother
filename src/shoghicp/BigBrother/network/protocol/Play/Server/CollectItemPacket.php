@@ -32,11 +32,12 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class CollectItemPacket extends OutboundPacket{
-
 	/** @var int */
 	public $eid;
+
 	/** @var int */
 	public $target;
+
 	/** @var int */
 	public $itemCount;
 

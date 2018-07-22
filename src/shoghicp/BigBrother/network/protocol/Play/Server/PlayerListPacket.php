@@ -32,13 +32,13 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class PlayerListPacket extends OutboundPacket{
-
 	const TYPE_ADD = 0;
 	const TYPE_UPDATE_NAME = 3;
 	const TYPE_REMOVE = 4;
 
 	/** @var int */
 	public $actionID;
+
 	/** @var array */
 	public $players = [];
 
@@ -83,7 +83,7 @@ class PlayerListPacket extends OutboundPacket{
 					$this->put($player[0]);//UUID
 					break;
 				default:
-					echo "PlayerListPacket: ".$this->actionID."\n";
+					echo "PlayerListPacket: " . $this->actionID . "\n";
 					break;
 			}
 		}

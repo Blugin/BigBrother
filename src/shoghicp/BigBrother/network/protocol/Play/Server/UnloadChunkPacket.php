@@ -32,9 +32,9 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class UnloadChunkPacket extends OutboundPacket{
-
 	/** @var int */
 	public $chunkX;
+
 	/** @var int */
 	public $chunkZ;
 

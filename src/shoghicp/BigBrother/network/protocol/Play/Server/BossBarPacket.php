@@ -32,7 +32,6 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class BossBarPacket extends OutboundPacket{
-
 	const TYPE_ADD = 0;
 	const TYPE_REMOVE = 1;
 	const TYPE_UPDATE_HEALTH = 2;
@@ -59,22 +58,26 @@ class BossBarPacket extends OutboundPacket{
 
 	/** @var string */
 	public $uuid;
+
 	/** @var int */
 	public $actionID;
 
 	/** @var string */
 	public $title;
-	/** @var float */ 
-	/*
-	* From 0 to 1.
-	* Values greater than 1 do not crash a Notchian client,
-	* and start rendering part of a second health bar at around 1.5.
-	*/
+
+	/** @var float
+	 * From 0 to 1.
+	 * Values greater than 1 do not crash a Notchian client,
+	 * and start rendering part of a second health bar at around 1.5.
+	 */
 	public $health = 1;
+
 	/** @var int */
 	public $color = self::COLOR_PURPLE;
+
 	/** @var int */
 	public $division = self::DIVISION_ZERO;
+
 	/** @var int */
 	public $flags = 0;
 
@@ -92,21 +95,21 @@ class BossBarPacket extends OutboundPacket{
 				$this->putVarInt($this->color);
 				$this->putVarInt($this->division);
 				$this->putByte($this->flags);
-			break;
+				break;
 			case self::TYPE_REMOVE:
-			break;
+				break;
 			case self::TYPE_UPDATE_HEALTH:
 				$this->putFloat($this->health);
-			break;
+				break;
 			case self::TYPE_UPDATE_TITLE:
 				$this->putString($this->title);
-			break;
+				break;
 			case self::TYPE_UPDATE_COLOR:
 				$this->putVarInt($this->color);
-			break;
+				break;
 			case self::TYPE_UPDATE_FLAGS:
 				$this->putByte($this->flags);
-			break;
+				break;
 		}
 	}
 }

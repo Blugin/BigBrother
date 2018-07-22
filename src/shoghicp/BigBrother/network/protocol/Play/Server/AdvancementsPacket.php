@@ -32,13 +32,15 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class AdvancementsPacket extends OutboundPacket{
-
 	/** @var bool */
 	public $doClear = false;
+
 	/** @var array */
 	public $advancements = [];
+
 	/** @var array */
 	public $identifiers = [];
+
 	/** @var array */
 	public $progress = [];
 

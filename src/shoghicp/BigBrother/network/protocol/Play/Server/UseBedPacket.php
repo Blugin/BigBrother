@@ -32,15 +32,11 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class UseBedPacket extends OutboundPacket{
-
 	/** @var int */
 	public $eid;
+
 	/** @var int */
-	public $bedX;
-	/** @var int */
-	public $bedY;
-	/** @var int */
-	public $bedZ;
+	public $bedX, $bedY, $bedZ;
 
 	public function pid() : int{
 		return self::USE_BED_PACKET;

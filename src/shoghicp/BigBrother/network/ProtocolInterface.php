@@ -29,53 +29,33 @@ declare(strict_types=1);
 
 namespace shoghicp\BigBrother\network;
 
+use pocketmine\{
+	Player, Server
+};
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\NetworkInterface;
-use pocketmine\Server;
-use pocketmine\Player;
 use pocketmine\utils\MainLogger;
-use shoghicp\BigBrother\BigBrother;
-use shoghicp\BigBrother\DesktopPlayer;
-use shoghicp\BigBrother\network\protocol\Login\EncryptionResponsePacket;
-use shoghicp\BigBrother\network\protocol\Login\LoginStartPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\AdvancementTabPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\EnchantItemPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\TeleportConfirmPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\AnimatePacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\ConfirmTransactionPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\CraftRecipeRequestPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\CraftingBookDataPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\ClickWindowPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\ClientSettingsPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\ClientStatusPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\CreativeInventoryActionPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\EntityActionPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PlayerAbilitiesPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\ChatPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\CloseWindowPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\HeldItemChangePacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\KeepAlivePacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PlayerBlockPlacementPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PlayerDiggingPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PlayerLookPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PlayerPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PlayerPositionAndLookPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PlayerPositionPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PluginMessagePacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\TabCompletePacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\UpdateSignPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\UseEntityPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\UseItemPacket;
+use shoghicp\BigBrother\{
+	BigBrother, DesktopPlayer
+};
+use shoghicp\BigBrother\network\protocol\Login\{
+	EncryptionResponsePacket, LoginStartPacket
+};
+use shoghicp\BigBrother\network\protocol\Play\Client\{
+	AdvancementTabPacket, AnimatePacket, ChatPacket, ClickWindowPacket, ClientSettingsPacket, ClientStatusPacket, CloseWindowPacket, ConfirmTransactionPacket, CraftingBookDataPacket, CraftRecipeRequestPacket, CreativeInventoryActionPacket, EnchantItemPacket, EntityActionPacket, HeldItemChangePacket, KeepAlivePacket, PlayerAbilitiesPacket, PlayerBlockPlacementPacket, PlayerDiggingPacket, PlayerLookPacket, PlayerPacket, PlayerPositionAndLookPacket, PlayerPositionPacket, PluginMessagePacket, TabCompletePacket, TeleportConfirmPacket, UpdateSignPacket, UseEntityPacket, UseItemPacket
+};
 use shoghicp\BigBrother\utils\Binary;
 
 class ProtocolInterface implements NetworkInterface{
-
 	/** @var BigBrother */
 	protected $plugin;
+
 	/** @var Server */
 	protected $server;
+
 	/** @var Translator */
 	protected $translator;
+
 	/** @var ServerThread */
 	protected $thread;
 
@@ -105,7 +85,7 @@ class ProtocolInterface implements NetworkInterface{
 		$this->server = $server;
 		$this->translator = $translator;
 		$this->threshold = $threshold;
-		$this->thread = new ServerThread($server->getLogger(), $server->getLoader(), $plugin->getPort(), $plugin->getIp(), $plugin->getMotd(), $plugin->getDataFolder()."server-icon.png", false);
+		$this->thread = new ServerThread($server->getLogger(), $server->getLoader(), $plugin->getPort(), $plugin->getIp(), $plugin->getMotd(), $plugin->getDataFolder() . "server-icon.png", false);
 		$this->sessions = new \SplObjectStorage();
 	}
 
@@ -132,6 +112,7 @@ class ProtocolInterface implements NetworkInterface{
 
 	/**
 	 * @param string $name
+	 *
 	 * @override
 	 */
 	public function setName(string $name) : void{
@@ -140,7 +121,7 @@ class ProtocolInterface implements NetworkInterface{
 			"MaxPlayers" => $info->getMaxPlayerCount(),
 			"OnlinePlayers" => $info->getPlayerCount(),
 		];
-		$buffer = chr(ServerManager::PACKET_SET_OPTION).chr(strlen("name"))."name".json_encode($value);
+		$buffer = chr(ServerManager::PACKET_SET_OPTION) . chr(strlen("name")) . "name" . json_encode($value);
 		$this->thread->pushMainToThreadPacket($buffer);
 	}
 
@@ -158,6 +139,7 @@ class ProtocolInterface implements NetworkInterface{
 	/**
 	 * @param Player $player
 	 * @param string $reason
+	 *
 	 * @override
 	 */
 	public function close(Player $player, string $reason = "unknown reason") : void{
@@ -179,7 +161,7 @@ class ProtocolInterface implements NetworkInterface{
 		if(\pocketmine\DEBUG > 4){
 			$id = bin2hex(chr($packet->pid()));
 			if($id !== "1f"){
-				echo "[Send][Interface] 0x".bin2hex(chr($packet->pid()))."\n";
+				echo "[Send][Interface] 0x" . bin2hex(chr($packet->pid())) . "\n";
 			}
 		}
 
@@ -277,7 +259,7 @@ class ProtocolInterface implements NetworkInterface{
 		if(\pocketmine\DEBUG > 4){
 			$id = bin2hex(chr(ord($payload{0})));
 			if($id !== "0b"){//KeepAlivePacket
-				echo "[Receive][Interface] 0x".bin2hex(chr(ord($payload{0})))."\n";
+				echo "[Receive][Interface] 0x" . bin2hex(chr(ord($payload{0}))) . "\n";
 			}
 		}
 
@@ -374,7 +356,7 @@ class ProtocolInterface implements NetworkInterface{
 					break;
 				default:
 					if(\pocketmine\DEBUG > 4){
-						echo "[Receive][Interface] 0x".bin2hex(chr($pid))." Not implemented\n"; //Debug
+						echo "[Receive][Interface] 0x" . bin2hex(chr($pid)) . " Not implemented\n"; //Debug
 					}
 					return;
 			}
@@ -449,7 +431,6 @@ class ProtocolInterface implements NetworkInterface{
 
 				$this->closeSession($id);
 			}
-
 		}
 	}
 }

@@ -32,17 +32,11 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class BlockChangePacket extends OutboundPacket{
+	/** @var int */
+	public $x, $y, $z;
 
 	/** @var int */
-	public $x;
-	/** @var int */
-	public $y;
-	/** @var int */
-	public $z;
-	/** @var int */
-	public $blockId;
-	/** @var int */
-	public $blockMeta;
+	public $blockId, $blockMeta;
 
 	public function pid() : int{
 		return self::BLOCK_CHANGE_PACKET;

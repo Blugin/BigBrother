@@ -32,17 +32,15 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class BlockActionPacket extends OutboundPacket{
+	/** @var int */
+	public $x, $y, $z;
 
 	/** @var int */
-	public $x;
-	/** @var int */
-	public $y;
-	/** @var int */
-	public $z;
-	/** @var int */
 	public $actionID;
+
 	/** @var int */
 	public $actionParam;
+
 	/** @var int */
 	public $blockType;
 

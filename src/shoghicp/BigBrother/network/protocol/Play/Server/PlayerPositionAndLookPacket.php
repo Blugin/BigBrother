@@ -32,19 +32,15 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class PlayerPositionAndLookPacket extends OutboundPacket{
+	/** @var float */
+	public $x, $y, $z;
 
 	/** @var float */
-	public $x;
-	/** @var float */
-	public $y;
-	/** @var float */
-	public $z;
-	/** @var float */
-	public $yaw;
-	/** @var float */
-	public $pitch;
+	public $yaw, $pitch;
+
 	/** @var int */
 	public $flags = 0;
+
 	/** @var int */
 	public $teleportId = 0;
 

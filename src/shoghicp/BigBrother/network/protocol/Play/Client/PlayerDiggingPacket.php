@@ -32,15 +32,12 @@ namespace shoghicp\BigBrother\network\protocol\Play\Client;
 use shoghicp\BigBrother\network\InboundPacket;
 
 class PlayerDiggingPacket extends InboundPacket{
-
 	/** @var int */
 	public $status;
+
 	/** @var int */
-	public $x;
-	/** @var int */
-	public $y;
-	/** @var int */
-	public $z;
+	public $x, $y, $z;
+
 	/** @var int */
 	public $face;
 

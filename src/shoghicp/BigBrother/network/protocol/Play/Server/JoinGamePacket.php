@@ -32,19 +32,24 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class JoinGamePacket extends OutboundPacket{
-
 	/** @var int */
 	public $eid;
+
 	/** @var int */
 	public $gamemode;
+
 	/** @var int */
 	public $dimension;
+
 	/** @var int */
 	public $difficulty;
+
 	/** @var int */
 	public $maxPlayers;
+
 	/** @var string */
 	public $levelType;
+
 	/** @var bool */
 	public $reducedDebugInfo = false;
 

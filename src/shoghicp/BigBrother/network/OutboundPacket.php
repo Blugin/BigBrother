@@ -30,7 +30,6 @@ declare(strict_types=1);
 namespace shoghicp\BigBrother\network;
 
 abstract class OutboundPacket extends Packet{
-
 	//Play
 	const SPAWN_OBJECT_PACKET = 0x00;
 	const SPAWN_EXPERIENCE_ORB_PACKET = 0x01;

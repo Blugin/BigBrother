@@ -29,21 +29,25 @@ declare(strict_types=1);
 
 namespace shoghicp\BigBrother\network\protocol\Play\Client;
 
-use shoghicp\BigBrother\network\InboundPacket;
 use pocketmine\item\Item;
+use shoghicp\BigBrother\network\InboundPacket;
 
 class ClickWindowPacket extends InboundPacket{
-
 	/** @var int */
 	public $windowID;
+
 	/** @var int */
 	public $slot;
+
 	/** @var int */
 	public $button;
+
 	/** @var int */
 	public $actionNumber;
+
 	/** @var int */
 	public $mode;
+
 	/** @var Item */
 	public $clickedItem;
 

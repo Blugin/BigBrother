@@ -32,7 +32,6 @@ namespace shoghicp\BigBrother\network;
 use shoghicp\BigBrother\utils\Binary;
 
 class ServerManager{
-
 	const VERSION = "1.12.2";
 	const PROTOCOL = 340;
 
@@ -93,27 +92,37 @@ class ServerManager{
 
 	/** @var ServerThread */
 	protected $thread;
+
 	/** @var resource */
 	protected $fp;
+
 	/** @var resource */
 	protected $socket;
+
 	/** @var int */
 	protected $identifier = 0;
+
 	/** @var resource[] */
 	protected $sockets = [];
+
 	/** @var Session[] */
 	protected $sessions = [];
+
 	/** @var \Logger */
 	protected $logger;
+
 	/** @var bool */
 	protected $shutdown = false;
 
 	/** @var string[] */
 	public $sample = [];
+
 	/** @var string */
 	public $description;
+
 	/** @var string|null */
 	public $favicon;
+
 	/** @var array */
 	public $serverdata = [
 		"MaxPlayers" => 20,
@@ -133,7 +142,7 @@ class ServerManager{
 		if($favicon === null or ($image = file_get_contents($favicon)) == ""){
 			$this->favicon = null;
 		}else{
-			$this->favicon = "data:image/png;base64,".base64_encode($image);
+			$this->favicon = "data:image/png;base64," . base64_encode($image);
 		}
 
 		$this->logger = $this->thread->getLogger();
@@ -187,7 +196,7 @@ class ServerManager{
 						return true;
 					}
 					$this->sessions[$id]->writeRaw($data);
-				break;
+					break;
 				case self::PACKET_ENABLE_ENCRYPTION:
 					$id = Binary::readInt(substr($buffer, 0, 4));
 					$secret = substr($buffer, 4);
@@ -197,7 +206,7 @@ class ServerManager{
 						return true;
 					}
 					$this->sessions[$id]->enableEncryption($secret);
-				break;
+					break;
 				case self::PACKET_SET_COMPRESSION:
 					$id = Binary::readInt(substr($buffer, 0, 4));
 					$threshold = Binary::readInt(substr($buffer, 4, 4));
@@ -207,7 +216,7 @@ class ServerManager{
 						return true;
 					}
 					$this->sessions[$id]->setCompression($threshold);
-				break;
+					break;
 				case self::PACKET_SET_OPTION:
 					$offset = 1;
 					$len = ord($packet{$offset++});
@@ -217,9 +226,9 @@ class ServerManager{
 					switch($name){
 						case "name":
 							$this->serverdata = json_decode($value, true);
-						break;
+							break;
 					}
-				break;
+					break;
 				case self::PACKET_CLOSE_SESSION:
 					$id = Binary::readInt(substr($buffer, 0, 4));
 					if(isset($this->sessions[$id])){
@@ -227,7 +236,7 @@ class ServerManager{
 					}else{
 						$this->closeSession($id);
 					}
-				break;
+					break;
 				case self::PACKET_SHUTDOWN:
 					foreach($this->sessions as $session){
 						$session->close();
@@ -236,10 +245,10 @@ class ServerManager{
 					$this->shutdown();
 					stream_socket_shutdown($this->socket, STREAM_SHUT_RDWR);
 					$this->shutdown = true;
-				break;
+					break;
 				case self::PACKET_EMERGENCY_SHUTDOWN:
 					$this->shutdown = true;
-				break;
+					break;
 			}
 
 			return true;
@@ -288,7 +297,8 @@ class ServerManager{
 					if($sockets[0] !== $this->fp){
 						$this->findSocket($sockets[0]);
 					}else{
-						while($this->processPacket()){}
+						while($this->processPacket()){
+						}
 					}
 					unset($sockets[0]);
 				}

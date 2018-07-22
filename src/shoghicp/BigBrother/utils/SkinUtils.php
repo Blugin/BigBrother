@@ -45,7 +45,7 @@ class SkinUtils{
 			for($height = 0; $height < $this->utils->getHeight(); $height++){
 				for($width = 0; $width < $this->utils->getWidth(); $width++){
 					$rgbadata = $this->utils->getRGBA($height, $width);
-					$data .= chr($rgbadata[0]).chr($rgbadata[1]).chr($rgbadata[2]).chr($rgbadata[3]);
+					$data .= chr($rgbadata[0]) . chr($rgbadata[1]) . chr($rgbadata[2]) . chr($rgbadata[3]);
 				}
 			}
 		}else{

@@ -32,13 +32,8 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class OpenSignEditorPacket extends OutboundPacket{
-
 	/** @var int */
-	public $x;
-	/** @var int */
-	public $y;
-	/** @var int */
-	public $z;
+	public $x, $y, $z;
 
 	public function pid() : int{
 		return self::OPEN_SIGN_EDITOR_PACKET;

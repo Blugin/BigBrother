@@ -32,17 +32,12 @@ namespace shoghicp\BigBrother\network\protocol\Play\Client;
 use shoghicp\BigBrother\network\InboundPacket;
 
 class PlayerPositionAndLookPacket extends InboundPacket{
+	/** @var float */
+	public $x, $y, $z;
 
 	/** @var float */
-	public $x;
-	/** @var float */
-	public $y;
-	/** @var float */
-	public $z;
-	/** @var float */
-	public $yaw;
-	/** @var float */
-	public $pitch;
+	public $yaw, $pitch;
+
 	/** @var bool */
 	public $onGround;
 

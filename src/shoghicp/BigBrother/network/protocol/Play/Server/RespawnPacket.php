@@ -32,13 +32,15 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class RespawnPacket extends OutboundPacket{
-
 	/** @var int */
 	public $dimension;
+
 	/** @var int */
 	public $difficulty;
+
 	/** @var int */
 	public $gamemode;
+
 	/** @var string */
 	public $levelType;
 

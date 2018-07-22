@@ -32,24 +32,32 @@ namespace shoghicp\BigBrother\network;
 use pocketmine\utils\TextFormat;
 use shoghicp\BigBrother\network\protocol\Login\LoginDisconnectPacket;
 use shoghicp\BigBrother\network\protocol\Status\PingPacket;
-use shoghicp\BigBrother\utils\AES;
-use shoghicp\BigBrother\utils\Binary;
+use shoghicp\BigBrother\utils\{
+	AES, Binary
+};
 
 class Session{
 	/** @var ServerManager */
 	private $manager;
+
 	/** @var int */
 	private $identifier;
+
 	/** @var resource */
 	private $socket;
+
 	/** @var int */
 	private $status = 0;
+
 	/** @var string */
 	protected $address;
+
 	/** @var int */
 	protected $port;
+
 	/** @var AES */
 	protected $aes;
+
 	/** @var bool */
 	protected $encryptionEnabled = false;
 
@@ -92,6 +100,7 @@ class Session{
 
 	/**
 	 * @param int $len
+	 *
 	 * @return string data read from socket
 	 */
 	public function read(int $len) : string{

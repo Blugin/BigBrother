@@ -29,13 +29,13 @@ declare(strict_types=1);
 
 namespace shoghicp\BigBrother\network\protocol\Play\Server;
 
-use shoghicp\BigBrother\network\OutboundPacket;
 use pocketmine\item\Item;
+use shoghicp\BigBrother\network\OutboundPacket;
 
 class WindowItemsPacket extends OutboundPacket{
-
 	/** @var int */
 	public $windowID;
+
 	/** @var Item[] */
 	public $items = [];
 

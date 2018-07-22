@@ -32,9 +32,9 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class EntityPropertiesPacket extends OutboundPacket{
-
 	/** @var int */
 	public $eid;
+
 	/** @var array */
 	public $entries = [];
 
