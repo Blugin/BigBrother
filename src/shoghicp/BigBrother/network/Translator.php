@@ -1351,7 +1351,7 @@ class Translator{
 					$pk->eid = $packet->entityRuntimeId;
 					$pk->yaw = $packet->yRot;
 					$pk->pitch = $packet->xRot;
-					$pk->onGround = $packet->onGround;
+					$pk->onGround = $player->isOnGround();
 					$packets[] = $pk;
 
 					$pk = new EntityHeadLookPacket();
