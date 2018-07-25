@@ -32,21 +32,17 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class SoundEffectPacket extends OutboundPacket{
-
 	/** @var int */
 	public $id;
+
 	/** @var int */
 	public $category;
+
 	/** @var int */
-	public $x;
-	/** @var int */
-	public $y;
-	/** @var int */
-	public $z;
+	public $x, $y, $z;
+
 	/** @var float */
-	public $volume;
-	/** @var float */
-	public $pitch;
+	public $volume, $pitch;
 
 	public function pid() : int{
 		return self::SOUND_EFFECT_PACKET;

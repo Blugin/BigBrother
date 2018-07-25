@@ -32,61 +32,57 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class SpawnObjectPacket extends OutboundPacket{
-
-	const BOAT              =  1;
-	const ITEM_STACK        =  2;
-	const AREA_EFFECT_CLOUD =  3;
-	const MINECART          = 10;
-	const ACTIVATED_TNT     = 50;
-	const ENDERCRYSTAL      = 51;
-	const TIPPED_ARROW      = 60;
-	const SNOWBALL          = 61;
-	const EGG               = 62;
-	const FIREBALL          = 63;
-	const FIRECHARGE        = 64;
+	const BOAT = 1;
+	const ITEM_STACK = 2;
+	const AREA_EFFECT_CLOUD = 3;
+	const MINECART = 10;
+	const ACTIVATED_TNT = 50;
+	const ENDERCRYSTAL = 51;
+	const TIPPED_ARROW = 60;
+	const SNOWBALL = 61;
+	const EGG = 62;
+	const FIREBALL = 63;
+	const FIRECHARGE = 64;
 	const THROWN_ENDERPEARL = 65;
-	const WITHER_SKULL      = 66;
-	const SHULKER_BULLET    = 67;
-	const LLAMA_SPIT        = 68;
-	const FALLING_OBJECTS   = 70;
-	const ITEM_FRAMES       = 71;
-	const EYE_OF_ENDER      = 72;
-	const THROWN_POTION     = 73;
+	const WITHER_SKULL = 66;
+	const SHULKER_BULLET = 67;
+	const LLAMA_SPIT = 68;
+	const FALLING_OBJECTS = 70;
+	const ITEM_FRAMES = 71;
+	const EYE_OF_ENDER = 72;
+	const THROWN_POTION = 73;
 	const THROWN_EXP_BOTTLE = 75;
-	const FIREWORK_ROCKET   = 76;
-	const LEASH_KNOT        = 77;
-	const ARMORSTAND        = 78;
-	const EVOCATION_FANGS   = 79;
-	const FISHING_HOOK      = 90;
-	const SPECTRAL_ARROW    = 91;
-	const DRAGON_FIREBALL   = 93;
+	const FIREWORK_ROCKET = 76;
+	const LEASH_KNOT = 77;
+	const ARMORSTAND = 78;
+	const EVOCATION_FANGS = 79;
+	const FISHING_HOOK = 90;
+	const SPECTRAL_ARROW = 91;
+	const DRAGON_FIREBALL = 93;
 
 	/** @var int */
 	public $eid;
+
 	/** @var string */
 	public $uuid;
+
 	/** @var int */
 	public $type;
+
 	/** @var float */
-	public $x;
+	public $x, $y, $z;
+
 	/** @var float */
-	public $y;
-	/** @var float */
-	public $z;
-	/** @var float */
-	public $pitch;
-	/** @var float */
-	public $yaw;
+	public $pitch, $yaw;
+
 	/** @var int */
 	public $data = 0;
+
 	/** @var bool */
 	public $sendVelocity = false;
+
 	/** @var float */
-	public $velocityX;
-	/** @var float */
-	public $velocityY;
-	/** @var float */
-	public $velocityZ;
+	public $velocityX, $velocityY, $velocityZ;
 
 	public function pid() : int{
 		return self::SPAWN_OBJECT_PACKET;

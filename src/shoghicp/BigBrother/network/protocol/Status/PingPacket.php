@@ -32,7 +32,6 @@ namespace shoghicp\BigBrother\network\protocol\Status;
 use shoghicp\BigBrother\network\Packet;
 
 class PingPacket extends Packet{
-
 	/** @var int */
 	public $time;
 

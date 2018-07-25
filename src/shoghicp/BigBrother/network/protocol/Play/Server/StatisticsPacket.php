@@ -32,9 +32,9 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class StatisticsPacket extends OutboundPacket{
-
 	/** @var int */
 	public $count;
+
 	/** @var array */
 	public $statistic = [];
 

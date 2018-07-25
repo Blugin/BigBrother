@@ -32,7 +32,6 @@ namespace shoghicp\BigBrother\network\protocol\Login;
 use shoghicp\BigBrother\network\InboundPacket;
 
 class LoginStartPacket extends InboundPacket{
-
 	/** @var string */
 	public $name;
 

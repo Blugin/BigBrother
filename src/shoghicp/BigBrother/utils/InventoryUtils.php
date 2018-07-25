@@ -29,66 +29,57 @@ declare(strict_types=1);
 
 namespace shoghicp\BigBrother\utils;
 
-use pocketmine\network\mcpe\protocol\DataPacket;
-use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
-use pocketmine\network\mcpe\protocol\ContainerClosePacket;
-use pocketmine\network\mcpe\protocol\ContainerSetDataPacket;
-use pocketmine\network\mcpe\protocol\InventoryContentPacket;
-use pocketmine\network\mcpe\protocol\InventorySlotPacket;
-use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
-use pocketmine\network\mcpe\protocol\TakeItemEntityPacket;
-use pocketmine\network\mcpe\protocol\MobArmorEquipmentPacket;
-use pocketmine\network\mcpe\protocol\types\ContainerIds;
-use pocketmine\network\mcpe\protocol\types\NetworkInventoryAction;
-use pocketmine\network\mcpe\protocol\types\WindowTypes;
-
-use pocketmine\entity\projectile\Arrow;
 use pocketmine\entity\Item as ItemEntity;
-use pocketmine\inventory\transaction\action\CreativeInventoryAction;
-use pocketmine\event\inventory\InventoryPickupItemEvent;
-use pocketmine\event\inventory\InventoryPickupArrowEvent;
-use pocketmine\inventory\CraftingRecipe;
+use pocketmine\entity\projectile\Arrow;
+use pocketmine\event\inventory\{
+	InventoryPickupArrowEvent, InventoryPickupItemEvent
+};
 use pocketmine\inventory\InventoryHolder;
+use pocketmine\inventory\transaction\action\CreativeInventoryAction;
 use pocketmine\item\Item;
 use pocketmine\math\Vector3;
-use pocketmine\tile\EnderChest as TileEnderChest;
+use pocketmine\network\mcpe\protocol\{
+	ContainerClosePacket, ContainerOpenPacket, ContainerSetDataPacket, DataPacket, InventoryContentPacket, InventorySlotPacket, InventoryTransactionPacket, MobArmorEquipmentPacket, TakeItemEntityPacket
+};
+use pocketmine\network\mcpe\protocol\types\{
+	ContainerIds, NetworkInventoryAction, WindowTypes
+};
+use pocketmine\tile\EnderChest;
 use pocketmine\tile\Tile;
-
-use shoghicp\BigBrother\BigBrother;
 use shoghicp\BigBrother\DesktopPlayer;
 use shoghicp\BigBrother\network\OutboundPacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\ConfirmTransactionPacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\EntityEquipmentPacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\OpenWindowPacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\SetSlotPacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\WindowItemsPacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\WindowPropertyPacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\CollectItemPacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\CloseWindowPacket as ServerCloseWindowPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\ClickWindowPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\CloseWindowPacket as ClientCloseWindowPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\CreativeInventoryActionPacket;
+use shoghicp\BigBrother\network\protocol\Play\Client\{
+	ClickWindowPacket, CloseWindowPacket as ClientCloseWindowPacket, CreativeInventoryActionPacket
+};
+use shoghicp\BigBrother\network\protocol\Play\Server\{
+	CloseWindowPacket as ServerCloseWindowPacket, CollectItemPacket, ConfirmTransactionPacket, EntityEquipmentPacket, OpenWindowPacket, SetSlotPacket, WindowItemsPacket, WindowPropertyPacket
+};
 
 class InventoryUtils{
-
 	/** @var DesktopPlayer */
 	private $player;
+
 	/** @var array */
 	private $windowInfo = [];
+
 	/** @var array */
-	private $shapedRecipes = [];
-	/** @var array */
-	private $shapelessRecipes = [];
+	private $shapedRecipes = [], $shapelessRecipes = [];
+
 	/** @var Item */
 	private $playerHeldItem = null;
+
 	/** @var Item[] */
 	private $playerCraftSlot = [];
+
 	/** @var Item[] */
 	private $playerCraftTableSlot = [];
+
 	/** @var Item[] */
 	private $playerArmorSlot = [];
+
 	/** @var Item[] */
 	private $playerInventorySlot = [];
+
 	/** @var Item[] */
 	private $playerHotbarSlot = [];
 
@@ -111,6 +102,7 @@ class InventoryUtils{
 
 	/**
 	 * @param Item[] $items
+	 *
 	 * @return Item[]
 	 */
 	public function getInventory(array $items) : array{
@@ -123,6 +115,7 @@ class InventoryUtils{
 
 	/**
 	 * @param Item[] $items
+	 *
 	 * @return Item[]
 	 */
 	public function getHotbar(array $items) : array{
@@ -138,6 +131,7 @@ class InventoryUtils{
 	 * @param int $inventorySlot
 	 * @param int &$targetWindowId
 	 * @param int &$targetInventorySlot
+	 *
 	 * @return Item&
 	 * @throws \InvalidArgumentException
 	 */
@@ -164,7 +158,7 @@ class InventoryUtils{
 				}else{
 					throw new \InvalidArgumentException("inventorySlot: " . $inventorySlot . " is out of range!!");
 				}
-			break;
+				break;
 			default:
 				if($inventorySlot >= $this->windowInfo[$windowId]["slots"]){
 					$targetWindowId = ContainerIds::INVENTORY;
@@ -185,7 +179,7 @@ class InventoryUtils{
 						$retval = &$this->windowInfo[$windowId]["items"][$inventorySlot];
 					}
 				}
-			break;
+				break;
 		}
 
 		return $retval;
@@ -240,6 +234,7 @@ class InventoryUtils{
 
 	/**
 	 * @param ContainerOpenPacket $packet
+	 *
 	 * @return OutboundPacket|null
 	 */
 	public function onWindowOpen(ContainerOpenPacket $packet) : ?OutboundPacket{
@@ -248,38 +243,38 @@ class InventoryUtils{
 			case WindowTypes::CONTAINER:
 				$type = "minecraft:chest";
 				$title = "chest";
-			break;
+				break;
 			case WindowTypes::WORKBENCH:
 				$type = "minecraft:crafting_table";
 				$title = "crafting";
-			break;
+				break;
 			case WindowTypes::FURNACE:
 				$type = "minecraft:furnace";
 				$title = "furnace";
-			break;
+				break;
 			case WindowTypes::ENCHANTMENT:
 				$type = "minecraft:enchanting_table";
 				$title = "enchant";
-			break;
+				break;
 			case WindowTypes::ANVIL:
 				$type = "minecraft:anvil";
 				$title = "repair";
-			break;
+				break;
 			default://TODO: http://wiki.vg/Inventory#Windows
-				echo "[InventoryUtils] ContainerOpenPacket: ".$packet->type."\n";
+				echo "[InventoryUtils] ContainerOpenPacket: " . $packet->type . "\n";
 
 				$pk = new ContainerClosePacket();
 				$pk->windowId = $packet->windowId;
 				$this->player->handleDataPacket($pk);
 
 				return null;
-			break;
+				break;
 		}
 
 		$slots = 0;
 		$saveSlots = 0;
 		if(($tile = $this->player->getLevel()->getTile(new Vector3((int) $packet->x, (int) $packet->y, (int) $packet->z))) instanceof Tile){
-			if($tile instanceof TileEnderChest){
+			if($tile instanceof EnderChest){
 				$slots = $saveSlots = $this->player->getEnderChestInventory()->getSize();
 				$title = "enderchest";
 			}elseif($tile instanceof InventoryHolder){
@@ -301,7 +296,7 @@ class InventoryUtils{
 		$pk = new OpenWindowPacket();
 		$pk->windowID = $packet->windowId;
 		$pk->inventoryType = $type;
-		$pk->windowTitle = json_encode(["translate" => "container.".$title]);
+		$pk->windowTitle = json_encode(["translate" => "container." . $title]);
 		$pk->slots = $slots;
 
 		$this->windowInfo[$packet->windowId] = ["type" => $packet->type, "slots" => $saveSlots, "items" => []];
@@ -311,6 +306,7 @@ class InventoryUtils{
 
 	/**
 	 * @param ClientCloseWindowPacket $packet
+	 *
 	 * @return ContainerClosePacket|null
 	 */
 	public function onWindowCloseFromPCtoPE(ClientCloseWindowPacket $packet) : ?ContainerClosePacket{
@@ -331,6 +327,7 @@ class InventoryUtils{
 
 	/**
 	 * @param ContainerClosePacket $packet
+	 *
 	 * @return ServerCloseWindowPacket
 	 */
 	public function onWindowCloseFromPEtoPC(ContainerClosePacket $packet) : ServerCloseWindowPacket{
@@ -346,6 +343,7 @@ class InventoryUtils{
 
 	/**
 	 * @param InventorySlotPacket $packet
+	 *
 	 * @return OutboundPacket|null
 	 */
 	public function onWindowSetSlot(InventorySlotPacket $packet) : ?OutboundPacket{
@@ -372,7 +370,7 @@ class InventoryUtils{
 				}
 
 				return $pk;
-			break;
+				break;
 			case ContainerIds::ARMOR:
 				$pk->windowID = ContainerIds::INVENTORY;
 				$pk->item = $packet->item;
@@ -381,11 +379,11 @@ class InventoryUtils{
 				$this->playerArmorSlot[$packet->inventorySlot] = $packet->item;
 
 				return $pk;
-			break;
+				break;
 			case ContainerIds::CREATIVE:
 			case ContainerIds::HOTBAR:
 			case ContainerIds::CURSOR://TODO
-			break;
+				break;
 			default:
 				if(isset($this->windowInfo[$packet->windowId])){
 					$pk->item = $packet->item;
@@ -395,19 +393,20 @@ class InventoryUtils{
 
 					return $pk;
 				}
-				echo "[InventoryUtils] InventorySlotPacket: 0x".bin2hex(chr($packet->windowId))."\n";
-			break;
+				echo "[InventoryUtils] InventorySlotPacket: 0x" . bin2hex(chr($packet->windowId)) . "\n";
+				break;
 		}
 		return null;
 	}
 
 	/**
 	 * @param ContainerSetDataPacket $packet
+	 *
 	 * @return OutboundPacket[]
 	 */
 	public function onWindowSetData(ContainerSetDataPacket $packet) : array{
 		if(!isset($this->windowInfo[$packet->windowId])){
-			echo "[InventoryUtils] ContainerSetDataPacket: 0x".bin2hex(chr($packet->windowId))."\n";
+			echo "[InventoryUtils] ContainerSetDataPacket: 0x" . bin2hex(chr($packet->windowId)) . "\n";
 		}
 
 		$packets = [];
@@ -426,7 +425,7 @@ class InventoryUtils{
 						$pk->property = 2;
 						$pk->value = $packet->value;
 						$packets[] = $pk;
-					break;
+						break;
 					case ContainerSetDataPacket::PROPERTY_FURNACE_LIT_TIME://Fire icon
 						$pk = new WindowPropertyPacket();
 						$pk->windowID = $packet->windowId;
@@ -439,15 +438,15 @@ class InventoryUtils{
 						$pk->property = 0;
 						$pk->value = $packet->value;
 						$packets[] = $pk;
-					break;
+						break;
 					default:
-						echo "[InventoryUtils] ContainerSetDataPacket: 0x".bin2hex(chr($packet->windowId))."\n";
-					break;
+						echo "[InventoryUtils] ContainerSetDataPacket: 0x" . bin2hex(chr($packet->windowId)) . "\n";
+						break;
 				}
-			break;
+				break;
 			default:
-				echo "[InventoryUtils] ContainerSetDataPacket: 0x".bin2hex(chr($packet->windowId))."\n";
-			break;
+				echo "[InventoryUtils] ContainerSetDataPacket: 0x" . bin2hex(chr($packet->windowId)) . "\n";
+				break;
 		}
 
 		return $packets;
@@ -455,6 +454,7 @@ class InventoryUtils{
 
 	/**
 	 * @param InventoryContentPacket $packet
+	 *
 	 * @return OutboundPacket[]
 	 */
 	public function onWindowSetContent(InventoryContentPacket $packet) : array{
@@ -494,7 +494,7 @@ class InventoryUtils{
 				$this->playerHotbarSlot = $hotbar;
 
 				$packets[] = $pk;
-			break;
+				break;
 			case ContainerIds::ARMOR:
 				foreach($packet->items as $slot => $item){
 					$pk = new SetSlotPacket();
@@ -506,11 +506,11 @@ class InventoryUtils{
 				}
 
 				$this->playerArmorSlot = $packet->items;
-			break;
+				break;
 			case ContainerIds::CREATIVE:
 			case ContainerIds::HOTBAR:
 			case ContainerIds::CURSOR://TODO
-			break;
+				break;
 			default:
 				if(isset($this->windowInfo[$packet->windowId])){
 					$pk = new WindowItemsPacket();
@@ -524,9 +524,9 @@ class InventoryUtils{
 
 					$packets[] = $pk;
 				}else{
-					echo "[InventoryUtils] InventoryContentPacket: 0x".bin2hex(chr($packet->windowId))."\n";
+					echo "[InventoryUtils] InventoryContentPacket: 0x" . bin2hex(chr($packet->windowId)) . "\n";
 				}
-			break;
+				break;
 		}
 
 		return $packets;
@@ -534,6 +534,7 @@ class InventoryUtils{
 
 	/**
 	 * @param ClickWindowPacket $packet
+	 *
 	 * @return InventoryTransactionPacket|null
 	 */
 	public function onWindowClick(ClickWindowPacket $packet) : ?InventoryTransactionPacket{
@@ -570,7 +571,7 @@ class InventoryUtils{
 								list($this->playerHeldItem, $item) = [$item, $this->playerHeldItem];//reverse
 							}
 						}
-					break;
+						break;
 					case 1://Right mouse click
 						if($packet->slot === -999){
 							$accepted = true;
@@ -596,23 +597,23 @@ class InventoryUtils{
 								}
 							}
 						}
-					break;
+						break;
 					default:
-						echo "[InventoryUtils] UnknownButtonType: ".$packet->mode." : ".$packet->button."\n";
-					break;
+						echo "[InventoryUtils] UnknownButtonType: " . $packet->mode . " : " . $packet->button . "\n";
+						break;
 				}
-			break;
+				break;
 			case 1:
 				switch($packet->button){
 					case 0://Shift + left mouse click
 					case 1://Shift + right mouse click
 
-					break;
+						break;
 					default:
-						echo "[InventoryUtils] UnknownButtonType: ".$packet->mode." : ".$packet->button."\n";
-					break;
+						echo "[InventoryUtils] UnknownButtonType: " . $packet->mode . " : " . $packet->button . "\n";
+						break;
 				}
-			break;
+				break;
 			case 2:
 				switch($packet->button){
 					case 0://Number key 1
@@ -632,22 +633,22 @@ class InventoryUtils{
 							$this->playerHotbarSlot[$packet->button] = $newItem;
 							$otherAction[] = $this->addNetworkInventoryAction(NetworkInventoryAction::SOURCE_CONTAINER, ContainerIds::INVENTORY, $packet->button, $item, $newItem);
 						}
-					break;
+						break;
 					default:
-						echo "[InventoryUtils] UnknownButtonType: ".$packet->mode." : ".$packet->button."\n";
-					break;
+						echo "[InventoryUtils] UnknownButtonType: " . $packet->mode . " : " . $packet->button . "\n";
+						break;
 				}
-			break;
+				break;
 			case 3:
 				switch($packet->button){
 					case 2://Middle click
 						echo "middle\n";
-					break;
+						break;
 					default:
-						echo "[InventoryUtils] UnknownButtonType: ".$packet->mode." : ".$packet->button."\n";
-					break;
+						echo "[InventoryUtils] UnknownButtonType: " . $packet->mode . " : " . $packet->button . "\n";
+						break;
 				}
-			break;
+				break;
 			case 4:
 				switch($packet->button){
 					case 0://Drop key
@@ -660,7 +661,7 @@ class InventoryUtils{
 						}else{//Left click outside inventory holding nothing
 							//unused?
 						}
-					break;
+						break;
 					case 1:
 						if($packet->slot !== -999){//Ctrl + Drop key
 							$accepted = true;
@@ -671,59 +672,59 @@ class InventoryUtils{
 						}else{//Right click outside inventory holding nothing
 							//unused?
 						}
-					break;
+						break;
 					default:
-						echo "[InventoryUtils] UnknownButtonType: ".$packet->mode." : ".$packet->button."\n";
-					break;
+						echo "[InventoryUtils] UnknownButtonType: " . $packet->mode . " : " . $packet->button . "\n";
+						break;
 				}
-			break;
+				break;
 			case 5:
 				switch($packet->button){
 					case 0://Starting left mouse drag
 
-					break;
+						break;
 					case 1://Add slot for left-mouse drag
 
-					break;
+						break;
 					case 2://Ending left mouse drag
 
-					break;
+						break;
 					case 4://Starting right mouse drag
 						echo "start\n";
-					break;
+						break;
 					case 5://Add slot for right-mouse drag
 						echo "add slot\n";
-					break;
+						break;
 					case 6://Ending right mouse drag
 						echo "end\n";
-					break;
+						break;
 					case 8://Starting middle mouse drag
 
-					break;
+						break;
 					case 9://Add slot for middle-mouse drag
 
-					break;
+						break;
 					case 10://Ending middle mouse drag
 
-					break;
+						break;
 					default:
-						echo "[InventoryUtils] UnknownButtonType: ".$packet->mode." : ".$packet->button."\n";
-					break;
+						echo "[InventoryUtils] UnknownButtonType: " . $packet->mode . " : " . $packet->button . "\n";
+						break;
 				}
-			break;
+				break;
 			case 6:
 				switch($packet->button){
 					case 0://Double click
 
-					break;
+						break;
 					default:
-						echo "[InventoryUtils] UnknownButtonType: ".$packet->mode." : ".$packet->button."\n";
-					break;
+						echo "[InventoryUtils] UnknownButtonType: " . $packet->mode . " : " . $packet->button . "\n";
+						break;
 				}
-			break;
+				break;
 			default:
-				echo "[InventoryUtils] ClickWindowPacket: ".$packet->mode."\n";
-			break;
+				echo "[InventoryUtils] ClickWindowPacket: " . $packet->mode . "\n";
+				break;
 		}
 
 		if($packet->windowID === 0){
@@ -832,7 +833,7 @@ class InventoryUtils{
 							$this->playerHeldItem = $heldItem;
 						}
 					}
-				break;
+					break;
 				//TODO: add more?
 			}
 		}
@@ -885,6 +886,7 @@ class InventoryUtils{
 
 	/**
 	 * @param CreativeInventoryActionPacket $packet
+	 *
 	 * @return DataPacket|null
 	 */
 	public function onCreativeInventoryAction(CreativeInventoryActionPacket $packet) : ?DataPacket{
@@ -973,6 +975,7 @@ class InventoryUtils{
 
 	/**
 	 * @param TakeItemEntityPacket $packet
+	 *
 	 * @return OutboundPacket|null
 	 */
 	public function onTakeItemEntity(TakeItemEntityPacket $packet) : ?OutboundPacket{
@@ -992,7 +995,7 @@ class InventoryUtils{
 
 		if($entity instanceof Arrow){
 			$this->player->getServer()->getPluginManager()->callEvent($ev = new InventoryPickupArrowEvent($this->player->getInventory(), $entity));
-			
+
 			if($ev->isCancelled()){
 				return null;
 			}
@@ -1015,6 +1018,7 @@ class InventoryUtils{
 
 	/**
 	 * @param MobArmorEquipmentPacket $packet
+	 *
 	 * @return OutboundPacket[]|array
 	 */
 	public function onMobArmorEquipment(MobArmorEquipmentPacket $packet) : array{
@@ -1100,7 +1104,6 @@ class InventoryUtils{
 		}*/
 
 
-
 		$resultRecipe = null;
 		foreach($this->shapedRecipes as $jsonResult => $jsonSlotData){
 			foreach($jsonSlotData as $jsonSlotMap => $recipe){
@@ -1143,6 +1146,7 @@ class InventoryUtils{
 	 * @param int  $inventorySlot
 	 * @param Item $oldItem
 	 * @param Item $newItem
+	 *
 	 * @return NetworkInventoryAction
 	 */
 	public function addNetworkInventoryAction(int $sourceType, int $windowId, int $inventorySlot, Item $oldItem, Item $newItem) : NetworkInventoryAction{
@@ -1157,7 +1161,8 @@ class InventoryUtils{
 	}
 
 	/**
-	 * @param InventoryTransactionPacket  $packet
+	 * @param InventoryTransactionPacket $packet
+	 *
 	 * @return bool
 	 */
 	public function checkInventoryTransactionPacket(InventoryTransactionPacket $packet) : bool{
@@ -1169,13 +1174,13 @@ class InventoryUtils{
 			if($action === null){
 				$errors++;
 				if(\pocketmine\DEBUG > 3){
-					echo "[Action Number #".$actionNumber."] error action!\n";
+					echo "[Action Number #" . $actionNumber . "] error action!\n";
 				}
 				continue;
 			}
 
 			if(\pocketmine\DEBUG > 3){
-				echo "[Action Number #".$actionNumber."] error nothing!\n";
+				echo "[Action Number #" . $actionNumber . "] error nothing!\n";
 			}
 
 			$actions[] = $action;
@@ -1192,19 +1197,19 @@ class InventoryUtils{
 
 			if($action->isValid($this->player)){
 				if(\pocketmine\DEBUG > 3){
-					echo "[Action Number #".$actionNumber."][Window Name: ".$windowName."] error nothing!\n";
+					echo "[Action Number #" . $actionNumber . "][Window Name: " . $windowName . "] error nothing!\n";
 				}
 			}else{
 				if(\pocketmine\DEBUG > 3){
-					echo "[Action Number #".$actionNumber."][Window Name: ".$windowName."] invalid Item!\n";
+					echo "[Action Number #" . $actionNumber . "][Window Name: " . $windowName . "] invalid Item!\n";
 					if($shortName === "SlotChangeAction"){
 						$checkItem = $action->getInventory()->getItem($action->getSlot());
 						var_dump(["checkItem" => $checkItem, "sourceItem" => $action->getSourceItem()]);//json_encode
 					}elseif($shortName === "CreativeInventoryAction"){
 						var_dump([
-							$this->player->isCreative(true),
-							($action->getActionType() === CreativeInventoryAction::TYPE_DELETE_ITEM or Item::getCreativeItemIndex($action->getSourceItem()) !== -1)
-						]);
+											 $this->player->isCreative(true),
+											 ($action->getActionType() === CreativeInventoryAction::TYPE_DELETE_ITEM or Item::getCreativeItemIndex($action->getSourceItem()) !== -1)
+										 ]);
 					}
 				}
 				$errors++;
@@ -1218,5 +1223,4 @@ class InventoryUtils{
 		}
 		return true;
 	}
-
 }

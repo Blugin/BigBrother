@@ -32,7 +32,6 @@ namespace shoghicp\BigBrother\network\protocol\Play\Client;
 use shoghicp\BigBrother\network\InboundPacket;
 
 class PlayerPacket extends InboundPacket{
-
 	/** @var bool */
 	public $onGround;
 

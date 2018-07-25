@@ -32,15 +32,18 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class OpenWindowPacket extends OutboundPacket{
-
 	/** @var int */
 	public $windowID;
+
 	/** @var string */
 	public $inventoryType;
+
 	/** @var string */
 	public $windowTitle;
+
 	/** @var int */
 	public $slots;
+
 	/** @var int */
 	public $entityId = -1;
 

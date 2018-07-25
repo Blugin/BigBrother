@@ -32,13 +32,8 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class SpawnPositionPacket extends OutboundPacket{
-
 	/** @var int */
-	public $spawnX;
-	/** @var int */
-	public $spawnY;
-	/** @var int */
-	public $spawnZ;
+	public $spawnX, $spawnY, $spawnZ;
 
 	public function pid() : int{
 		return self::SPAWN_POSITION_PACKET;

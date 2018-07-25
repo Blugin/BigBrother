@@ -32,11 +32,12 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class SetExperiencePacket extends OutboundPacket{
-
 	/** @var float */
 	public $experience;
+
 	/** @var int */
 	public $level;
+
 	/** @var int */
 	public $totalexperience;
 

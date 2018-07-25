@@ -32,9 +32,9 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class EntityHeadLookPacket extends OutboundPacket{
-
 	/** @var int */
 	public $eid;
+
 	/** @var int */
 	public $yaw;
 

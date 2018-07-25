@@ -32,23 +32,17 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class ExplosionPacket extends OutboundPacket{
+	/** @var float */
+	public $x, $y, $z;
 
 	/** @var float */
-	public $x;
-	/** @var float */
-	public $y;
-	/** @var float */
-	public $z;
-	/** @var float */
 	public $radius;
+
 	/** @var array */
 	public $records = [];
+
 	/** @var float */
-	public $motionX;
-	/** @var float */
-	public $motionY;
-	/** @var float */
-	public $motionZ;
+	public $motionX, $motionY, $motionZ;
 
 	public function pid() : int{
 		return self::EXPLOSION_PACKET;

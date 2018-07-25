@@ -32,9 +32,9 @@ namespace shoghicp\BigBrother\network\protocol\Play\Client;
 use shoghicp\BigBrother\network\InboundPacket;
 
 class EnchantItemPacket extends InboundPacket{
-
 	/** @var int */
 	public $windowID;
+
 	/** @var int */
 	public $enchantment;
 

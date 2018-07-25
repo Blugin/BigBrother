@@ -32,20 +32,20 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class PlayerAbilitiesPacket extends OutboundPacket{
-
 	/** @var bool */
 	public $damageDisabled;
+
 	/** @var bool */
 	public $canFly;
+
 	/** @var bool */
 	public $isFlying = false;
+
 	/** @var bool */
 	public $isCreative;
 
 	/** @var float */
-	public $flyingSpeed;
-	/** @var float */
-	public $walkingSpeed;
+	public $flyingSpeed, $walkingSpeed;
 
 	public function pid() : int{
 		return self::PLAYER_ABILITIES_PACKET;

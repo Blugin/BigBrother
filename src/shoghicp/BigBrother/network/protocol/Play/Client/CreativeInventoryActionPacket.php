@@ -29,13 +29,13 @@ declare(strict_types=1);
 
 namespace shoghicp\BigBrother\network\protocol\Play\Client;
 
-use shoghicp\BigBrother\network\InboundPacket;
 use pocketmine\item\Item;
+use shoghicp\BigBrother\network\InboundPacket;
 
 class CreativeInventoryActionPacket extends InboundPacket{
-
 	/** @var int */
 	public $slot;
+
 	/** @var Item */
 	public $item;
 

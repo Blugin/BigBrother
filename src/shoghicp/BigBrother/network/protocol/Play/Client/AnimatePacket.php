@@ -32,8 +32,7 @@ namespace shoghicp\BigBrother\network\protocol\Play\Client;
 use shoghicp\BigBrother\network\InboundPacket;
 
 class AnimatePacket extends InboundPacket{
-
-	/** @var int  */
+	/** @var int */
 	public $hand;
 
 	public function pid() : int{

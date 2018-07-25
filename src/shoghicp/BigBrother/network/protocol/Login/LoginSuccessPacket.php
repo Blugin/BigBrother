@@ -32,9 +32,9 @@ namespace shoghicp\BigBrother\network\protocol\Login;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class LoginSuccessPacket extends OutboundPacket{
-
 	/** @var string */
 	public $uuid;
+
 	/** @var string */
 	public $name;
 

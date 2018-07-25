@@ -29,76 +29,81 @@ declare(strict_types=1);
 
 namespace shoghicp\BigBrother;
 
-use pocketmine\Player;
 use pocketmine\event\server\DataPacketReceiveEvent;
-use pocketmine\item\Item;
 use pocketmine\inventory\CraftingGrid;
-use pocketmine\math\Vector3;
-use pocketmine\network\mcpe\protocol\types\WindowTypes;
-use pocketmine\network\mcpe\protocol\ContainerOpenPacket;
-use pocketmine\network\mcpe\protocol\ProtocolInfo as Info;
-use pocketmine\network\mcpe\protocol\LoginPacket;
-use pocketmine\network\mcpe\protocol\RequestChunkRadiusPacket;
-use pocketmine\network\mcpe\protocol\ResourcePackClientResponsePacket;
-use pocketmine\network\mcpe\protocol\DataPacket;
-use pocketmine\network\mcpe\protocol\BatchPacket;
-use pocketmine\network\SourceInterface;
-use pocketmine\level\Level;
+use pocketmine\item\Item;
 use pocketmine\level\format\Chunk;
+use pocketmine\level\Level;
+use pocketmine\math\Vector3;
+use pocketmine\network\mcpe\protocol\{
+	BatchPacket, ContainerOpenPacket, DataPacket, LoginPacket, ProtocolInfo, RequestChunkRadiusPacket, ResourcePackClientResponsePacket
+};
+use pocketmine\network\mcpe\protocol\types\WindowTypes;
+use pocketmine\network\NetworkInterface;
+use pocketmine\Player;
 use pocketmine\timings\Timings;
-use pocketmine\utils\Utils;
-use pocketmine\utils\TextFormat;
-use shoghicp\BigBrother\network\Packet;
-use shoghicp\BigBrother\network\protocol\Login\EncryptionRequestPacket;
-use shoghicp\BigBrother\network\protocol\Login\EncryptionResponsePacket;
-use shoghicp\BigBrother\network\protocol\Login\LoginSuccessPacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\AdvancementsPacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\KeepAlivePacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\PlayerPositionAndLookPacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\TitlePacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\SelectAdvancementTabPacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\UnloadChunkPacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\UnlockRecipesPacket;
-use shoghicp\BigBrother\network\ProtocolInterface;
+use pocketmine\utils\{
+	TextFormat, Utils
+};
 use shoghicp\BigBrother\entity\ItemFrameBlockEntity;
-use shoghicp\BigBrother\utils\Binary;
-use shoghicp\BigBrother\utils\CapeUtils;
-use shoghicp\BigBrother\utils\InventoryUtils;
-use shoghicp\BigBrother\utils\RecipeUtils;
-use shoghicp\BigBrother\utils\SkinUtils;
+use shoghicp\BigBrother\network\Packet;
+use shoghicp\BigBrother\network\protocol\Login\{
+	EncryptionRequestPacket, EncryptionResponsePacket, LoginSuccessPacket
+};
+use shoghicp\BigBrother\network\protocol\Play\Server\{
+	AdvancementsPacket, KeepAlivePacket, PlayerPositionAndLookPacket, SelectAdvancementTabPacket, TitlePacket, UnloadChunkPacket
+};
+use shoghicp\BigBrother\network\ProtocolInterface;
+use shoghicp\BigBrother\utils\{
+	Binary, CapeUtils, InventoryUtils, RecipeUtils, SkinUtils
+};
 
 class DesktopPlayer extends Player{
-
 	/** @var int */
 	private $bigBrother_status = 0; //0 = log in, 1 = playing
+
 	/** @var string */
 	protected $bigBrother_uuid;
+
 	/** @var string */
 	protected $bigBrother_formatedUUID;
+
 	/** @var array */
 	protected $bigBrother_properties = [];
+
 	/** @var string */
 	private $bigBrother_checkToken;
+
 	/** @var string */
 	private $bigBrother_secret;
+
 	/** @var string */
 	private $bigBrother_username;
+
 	/** @var string */
 	private $bigbrother_clientId;
+
 	/** @var int */
 	private $bigBrother_dimension = 0;
+
 	/** @var string[] */
 	private $bigBrother_entitylist = [];
+
 	/** @var InventoryUtils */
 	private $inventoryUtils;
+
 	/** @var RecipeUtils */
 	private $recipeUtils;
+
 	/** @var array */
 	private $bigBrother_clientSetting = [];
+
 	/** @var array */
 	private $bigBrother_pluginMessageList = [];
+
 	/** @var array */
 	private $bigBrother_breakPosition = [];
+
 	/** @var array */
 	private $bigBrother_bossBarData = [
 		"entityRuntimeId" => -1,
@@ -108,17 +113,18 @@ class DesktopPlayer extends Player{
 
 	/** @var ProtocolInterface */
 	protected $interface;
+
 	/** @var BigBrother */
 	protected $plugin;
 
 	/**
-	 * @param SourceInterface $interface
-	 * @param string          $clientID
-	 * @param string          $address
-	 * @param int             $port
-	 * @param BigBrother      $plugin
+	 * @param NetworkInterface $interface
+	 * @param string           $clientID
+	 * @param string           $address
+	 * @param int              $port
+	 * @param BigBrother       $plugin
 	 */
-	public function __construct(SourceInterface $interface, string $clientID, string $address, int $port, BigBrother $plugin){
+	public function __construct(NetworkInterface $interface, string $clientID, string $address, int $port, BigBrother $plugin){
 		$this->plugin = $plugin;
 		$this->bigbrother_clientId = $clientID;
 		parent::__construct($interface, $address, $port);
@@ -151,19 +157,20 @@ class DesktopPlayer extends Player{
 
 	/**
 	 * @param int $level_dimension
+	 *
 	 * @return int dimension of pc version converted from $level_dimension
 	 */
 	public function bigBrother_getDimensionPEToPC(int $level_dimension) : int{
 		switch($level_dimension){
 			case 0://Overworld
 				$dimension = 0;
-			break;
+				break;
 			case 1://Nether
 				$dimension = -1;
-			break;
+				break;
 			case 2://The End
 				$dimension = 1;
-			break;
+				break;
 		}
 		$this->bigBrother_dimension = $dimension;
 		return $dimension;
@@ -181,6 +188,7 @@ class DesktopPlayer extends Player{
 
 	/**
 	 * @param int $eid
+	 *
 	 * @return string
 	 */
 	public function bigBrother_getEntityList(int $eid) : string{
@@ -248,7 +256,8 @@ class DesktopPlayer extends Player{
 	}
 
 	/**
-	 * @param  string       $bossBardata
+	 * @param  string $bossBardata
+	 *
 	 * @return string|array
 	 */
 	public function bigBrother_getBossBarData(string $bossBarData = ""){
@@ -354,6 +363,7 @@ class DesktopPlayer extends Player{
 
 	/**
 	 * @param CraftingGrid $grid
+	 *
 	 * @override
 	 */
 	public function setCraftingGrid(CraftingGrid $grid) : void{
@@ -376,9 +386,10 @@ class DesktopPlayer extends Player{
 	}
 
 	/**
-	 * @param int $chunkX
-	 * @param int $chunkZ
+	 * @param int         $chunkX
+	 * @param int         $chunkZ
 	 * @param BatchPacket $payload
+	 *
 	 * @override
 	 */
 	public function sendChunk(int $chunkX, int $chunkZ, BatchPacket $payload){
@@ -395,6 +406,7 @@ class DesktopPlayer extends Player{
 	 * @param int   $chunkX
 	 * @param int   $chunkZ
 	 * @param Level $level
+	 *
 	 * @override
 	 */
 	protected function unloadChunk(int $chunkX, int $chunkZ, Level $level = null){
@@ -412,11 +424,14 @@ class DesktopPlayer extends Player{
 
 	/**
 	 * @param Chunk $chunk
+	 *
 	 * @override
 	 */
 	public function onChunkUnloaded(Chunk $chunk){
-		foreach(ItemFrameBlockEntity::getItemFramesInChunk($this->level, $chunk->getX(), $chunk->getZ()) as $frame){
-			$frame->despawnFromAll();
+		if($this->loggedIn){
+			foreach(ItemFrameBlockEntity::getItemFramesInChunk($this->level, $chunk->getX(), $chunk->getZ()) as $frame){
+				$frame->despawnFromAll();
+			}
 		}
 	}
 
@@ -514,7 +529,7 @@ class DesktopPlayer extends Player{
 
 			$pk = new LoginPacket();
 			$pk->username = $this->bigBrother_username;
-			$pk->protocol = Info::CURRENT_PROTOCOL;
+			$pk->protocol = ProtocolInfo::CURRENT_PROTOCOL;
 			$pk->clientUUID = $this->bigBrother_formatedUUID;
 			$pk->clientId = crc32($this->bigbrother_clientId);
 			$pk->xuid = str_repeat("0", 16);
@@ -525,10 +540,10 @@ class DesktopPlayer extends Player{
 			$pk->clientData["DeviceModel"] = "PC";
 
 			if($model){
-				$pk->clientData["SkinId"] = $this->bigBrother_formatedUUID."_CustomSlim";
+				$pk->clientData["SkinId"] = $this->bigBrother_formatedUUID . "_CustomSlim";
 				$pk->clientData["SkinGeometryName"] = "geometry.humanoid.customSlim";
 			}else{
-				$pk->clientData["SkinId"] = $this->bigBrother_formatedUUID."_Custom";
+				$pk->clientData["SkinId"] = $this->bigBrother_formatedUUID . "_Custom";
 				$pk->clientData["SkinGeometryName"] = "geometry.humanoid.custom";
 			}
 
@@ -545,7 +560,7 @@ class DesktopPlayer extends Player{
 	}
 
 	/**
-	 * @param BigBrother $plugin
+	 * @param BigBrother               $plugin
 	 * @param EncryptionResponsePacket $packet
 	 */
 	public function bigBrother_processAuthentication(BigBrother $plugin, EncryptionResponsePacket $packet) : void{
@@ -555,14 +570,14 @@ class DesktopPlayer extends Player{
 		if($token !== $this->bigBrother_checkToken){
 			$this->close("", "Invalid check token");
 		}else{
-			$this->getAuthenticateOnline($this->bigBrother_username, Binary::sha1("".$this->bigBrother_secret.$plugin->getASN1PublicKey()));
+			$this->getAuthenticateOnline($this->bigBrother_username, Binary::sha1("" . $this->bigBrother_secret . $plugin->getASN1PublicKey()));
 		}
 	}
 
 	/**
 	 * @param BigBrother $plugin
-	 * @param string $username
-	 * @param bool $onlineMode
+	 * @param string     $username
+	 * @param bool       $onlineMode
 	 */
 	public function bigBrother_handleAuthentication(BigBrother $plugin, string $username, bool $onlineMode = false) : void{
 		if($this->bigBrother_status === 0){
@@ -584,13 +599,14 @@ class DesktopPlayer extends Player{
 
 	/**
 	 * @param string $username
+	 *
 	 * @return array|bool profile data if success else false
 	 */
 	public function getProfile(string $username){
 		$profile = null;
 		$info = null;
 
-		$response = Utils::getURL("https://api.mojang.com/users/profiles/minecraft/".$username);
+		$response = Utils::getURL("https://api.mojang.com/users/profiles/minecraft/" . $username);
 		if($response !== false){
 			$profile = json_decode($response, true);
 		}
@@ -600,7 +616,7 @@ class DesktopPlayer extends Player{
 		}
 
 		$uuid = $profile["id"];
-		$response = Utils::getURL("https://sessionserver.mojang.com/session/minecraft/profile/".$uuid, 3);
+		$response = Utils::getURL("https://sessionserver.mojang.com/session/minecraft/profile/" . $uuid, 3);
 		if($response !== false){
 			$info = json_decode($response, true);
 		}
@@ -619,7 +635,7 @@ class DesktopPlayer extends Player{
 	public function getAuthenticateOnline(string $username, string $hash) : void{
 		$result = null;
 
-		$response = Utils::getURL("https://sessionserver.mojang.com/session/minecraft/hasJoined?username=".$username."&serverId=".$hash, 5);
+		$response = Utils::getURL("https://sessionserver.mojang.com/session/minecraft/hasJoined?username=" . $username . "&serverId=" . $hash, 5);
 		if($response !== false){
 			$result = json_decode($response, true);
 		}
@@ -632,9 +648,9 @@ class DesktopPlayer extends Player{
 	}
 
 
-
 	/**
 	 * @param DataPacket $packet
+	 *
 	 * @override
 	 */
 	public function handleDataPacket(DataPacket $packet){

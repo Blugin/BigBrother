@@ -29,15 +29,16 @@ declare(strict_types=1);
 
 namespace shoghicp\BigBrother\network\protocol\Play\Server;
 
-use shoghicp\BigBrother\network\OutboundPacket;
 use pocketmine\item\Item;
+use shoghicp\BigBrother\network\OutboundPacket;
 
 class EntityEquipmentPacket extends OutboundPacket{
-
 	/** @var int */
 	public $eid;
+
 	/** @var int */
 	public $slot;
+
 	/** @var Item */
 	public $item;
 

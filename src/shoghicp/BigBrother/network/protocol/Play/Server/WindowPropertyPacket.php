@@ -32,11 +32,12 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class WindowPropertyPacket extends OutboundPacket{
-
 	/** @var int */
 	public $windowID;
+
 	/** @var int */
 	public $property;
+
 	/** @var int */
 	public $value;
 

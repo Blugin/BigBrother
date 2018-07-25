@@ -31,14 +31,14 @@ namespace shoghicp\BigBrother\network;
 
 use pocketmine\item\Item;
 use pocketmine\nbt\LittleEndianNBTStream;
-use shoghicp\BigBrother\utils\Binary;
-use shoghicp\BigBrother\utils\ConvertUtils;
-use shoghicp\BigBrother\utils\ComputerItem;
+use shoghicp\BigBrother\utils\{
+	Binary, ComputerItem, ConvertUtils
+};
 
 abstract class Packet extends \stdClass{
-
 	/** @var string */
 	protected $buffer;
+
 	/** @var int */
 	protected $offset = 0;
 
@@ -67,7 +67,7 @@ abstract class Packet extends \stdClass{
 		return Binary::readInt($this->get(4));
 	}
 
-	protected function getPosition(int &$x=null, int &$y=null, int &$z=null) : void{
+	protected function getPosition(int &$x = null, int &$y = null, int &$z = null) : void{
 		$long = $this->getLong();
 		$x = $long >> 38;
 		$y = ($long >> 26) & 0xFFF;

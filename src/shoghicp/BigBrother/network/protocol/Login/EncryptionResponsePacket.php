@@ -32,9 +32,9 @@ namespace shoghicp\BigBrother\network\protocol\Login;
 use shoghicp\BigBrother\network\InboundPacket;
 
 class EncryptionResponsePacket extends InboundPacket{
-
 	/** @var string */
 	public $sharedSecret;
+
 	/** @var string */
 	public $verifyToken;
 

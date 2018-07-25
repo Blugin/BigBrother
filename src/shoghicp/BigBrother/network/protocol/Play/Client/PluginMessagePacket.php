@@ -32,9 +32,9 @@ namespace shoghicp\BigBrother\network\protocol\Play\Client;
 use shoghicp\BigBrother\network\InboundPacket;
 
 class PluginMessagePacket extends InboundPacket{
-
 	/** @var string */
 	public $channel;
+
 	/** @var string[] */
 	public $data = [];
 
@@ -55,19 +55,19 @@ class PluginMessagePacket extends InboundPacket{
 						$string = "";
 					}else{
 						$string .= $str;
-						if(count($channels) -1 === $num){
+						if(count($channels) - 1 === $num){
 							$this->data[] = hex2bin($string);
 						}
 					}
 				}
-			break;
+				break;
 			case "MC|Brand":
 				$this->data[] = $this->getString();
-			break;
+				break;
 			case "MC|BEdit":
 			case "MC|BSign":
 				$this->data[] = $this->getSlot();
-			break;
+				break;
 		}
 	}
 }

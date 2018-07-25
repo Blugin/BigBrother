@@ -34,16 +34,13 @@ use shoghicp\BigBrother\network\OutboundPacket;
 class EntityTeleportPacket extends OutboundPacket{
 	/** @var int */
 	public $eid;
+
 	/** @var float */
-	public $x;
+	public $x, $y, $z;
+
 	/** @var float */
-	public $y;
-	/** @var float */
-	public $z;
-	/** @var float */
-	public $yaw;
-	/** @var float */
-	public $pitch;
+	public $yaw, $pitch;
+
 	/** @var bool */
 	public $onGround = true;
 

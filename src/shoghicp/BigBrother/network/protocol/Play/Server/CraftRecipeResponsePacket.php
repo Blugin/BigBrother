@@ -32,9 +32,9 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class CraftRecipeResponsePacket extends OutboundPacket{
-
 	/** @var int */
 	public $windowID;
+
 	/** @var int */
 	public $recipeId = -1;
 

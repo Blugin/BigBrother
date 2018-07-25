@@ -30,11 +30,9 @@ declare(strict_types=1);
 namespace shoghicp\BigBrother\utils;
 
 use pocketmine\network\mcpe\protocol\CraftingDataPacket;
-
 use shoghicp\BigBrother\DesktopPlayer;
 
 class RecipeUtils{
-
 	/** @var DesktopPlayer */
 	private $player;
 
@@ -55,5 +53,4 @@ class RecipeUtils{
 		$pk->extraRecipes[] = 0;
 		$this->putRawPacket($pk);*/
 	}
-
 }

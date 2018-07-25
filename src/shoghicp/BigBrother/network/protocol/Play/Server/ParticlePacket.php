@@ -32,27 +32,24 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class ParticlePacket extends OutboundPacket{
-
 	/** @var int */
 	public $id;
+
 	/** @var bool */
 	public $longDistance = false;
+
 	/** @var float */
-	public $x;
+	public $x, $y, $z;
+
 	/** @var float */
-	public $y;
-	/** @var float */
-	public $z;
-	/** @var float */
-	public $offsetX;
-	/** @var float */
-	public $offsetY;
-	/** @var float */
-	public $offsetZ;
+	public $offsetX, $offsetY, $offsetZ;
+
 	/** @var float */
 	public $data;
+
 	/** @var int */
 	public $count;
+
 	/** @var array */
 	public $addData = [];
 

@@ -32,7 +32,6 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class DestroyEntitiesPacket extends OutboundPacket{
-
 	/** @var int[] */
 	public $ids = [];
 

@@ -27,19 +27,21 @@
 
 declare(strict_types=1);
 
-namespace shoghicp\BigBrother\network\protocol\Play\Client;
+namespace shoghicp\BigBrother\utils;
 
-use shoghicp\BigBrother\network\InboundPacket;
+use pocketmine\item\Item;
+use pocketmine\nbt\tag\CompoundTag;
 
-class TeleportConfirmPacket extends InboundPacket{
-	/** @var int */
-	public $teleportId;
-
-	public function pid() : int{
-		return self::TELEPORT_CONFIRM_PACKET;
-	}
-
-	protected function decode() : void{
-		$this->teleportId = $this->getVarInt();
+class ComputerItem extends Item{
+	/**
+	 * @param int                $id
+	 * @param int                $meta
+	 * @param int                $count
+	 * @param CompoundTag|string $tag
+	 */
+	public function __construct(int $id = 0, int $meta = 0, int $count = 1, $tag = ""){
+		parent::__construct($id, $meta);
+		$this->setCount($count);
+		$this->setCompoundTag($tag);
 	}
 }

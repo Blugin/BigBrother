@@ -32,9 +32,9 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class TimeUpdatePacket extends OutboundPacket{
-
 	/** @var int */
 	public $age;
+
 	/** @var int */
 	public $time;
 

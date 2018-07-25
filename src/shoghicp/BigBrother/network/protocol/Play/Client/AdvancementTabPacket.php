@@ -32,10 +32,8 @@ namespace shoghicp\BigBrother\network\protocol\Play\Client;
 use shoghicp\BigBrother\network\InboundPacket;
 
 class AdvancementTabPacket extends InboundPacket{
-
-	/** @var int  */
-	public $status;
-	public $tabId;
+	/** @var int */
+	public $status, $tabId;
 
 	public function pid() : int{
 		return self::ADVANCEMENT_TAB_PACKET;

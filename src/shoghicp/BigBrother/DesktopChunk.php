@@ -31,25 +31,30 @@ namespace shoghicp\BigBrother;
 
 use pocketmine\block\Block;
 use pocketmine\level\Level;
-use shoghicp\BigBrother\utils\Binary;
-use shoghicp\BigBrother\utils\ConvertUtils;
 use shoghicp\BigBrother\entity\ItemFrameBlockEntity;
+use shoghicp\BigBrother\utils\{
+	Binary, ConvertUtils
+};
 
 class DesktopChunk{
 	/** @var DesktopPlayer */
 	private $player;
+
 	/** @var int */
-	private $chunkX;
-	/** @var int */
-	private $chunkZ;
+	private $chunkX, $chunkZ;
+
 	/** @var Level */
 	private $level;
+
 	/** @var bool */
 	private $groundUp;
+
 	/** @var int */
 	private $bitMap;
+
 	/** @var string */
 	private $biomes;
+
 	/** @var string */
 	private $chunkData;
 
@@ -130,7 +135,7 @@ class DesktopChunk{
 			}
 
 			/* Bits Per Block & Palette Length */
-			$payload .= Binary::writeByte($bitsperblock).Binary::writeComputerVarInt(count($palette));
+			$payload .= Binary::writeByte($bitsperblock) . Binary::writeComputerVarInt(count($palette));
 
 			/* Palette */
 			foreach($palette as $value){

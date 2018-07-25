@@ -32,7 +32,6 @@ namespace shoghicp\BigBrother\network\protocol\Play\Client;
 use shoghicp\BigBrother\network\InboundPacket;
 
 class ChatPacket extends InboundPacket{
-
 	/** @var string */
 	public $message;
 

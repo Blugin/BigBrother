@@ -29,25 +29,29 @@ declare(strict_types=1);
 
 namespace shoghicp\BigBrother;
 
-use pocketmine\plugin\PluginBase;
-use pocketmine\network\mcpe\protocol\ProtocolInfo as Info;
-use pocketmine\network\mcpe\protocol\TextPacket;
-use pocketmine\block\Block;
-use pocketmine\block\Chest;
-use pocketmine\event\player\PlayerRespawnEvent;
-use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\Listener;
-use pocketmine\utils\TextFormat;
-
 use phpseclib\Crypt\RSA;
-use shoghicp\BigBrother\network\ServerManager;
-use shoghicp\BigBrother\network\ProtocolInterface;
-use shoghicp\BigBrother\network\Translator;
-use shoghicp\BigBrother\network\protocol\Play\Server\RespawnPacket;
-use shoghicp\BigBrother\network\protocol\Play\Server\OpenSignEditorPacket;
-use shoghicp\BigBrother\utils\ConvertUtils;
-use shoghicp\BigBrother\utils\AES;
+use pocketmine\block\{
+	Block, Chest
+};
+use pocketmine\event\block\{
+	BlockBreakEvent, BlockPlaceEvent
+};
+use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerRespawnEvent;
+use pocketmine\network\mcpe\protocol\{
+	ProtocolInfo, TextPacket
+};
+use pocketmine\plugin\PluginBase;
+use pocketmine\utils\TextFormat;
+use shoghicp\BigBrother\network\{
+	ProtocolInterface, ServerManager, Translator
+};
+use shoghicp\BigBrother\network\protocol\Play\Server\{
+	OpenSignEditorPacket, RespawnPacket
+};
+use shoghicp\BigBrother\utils\{
+	AES, ConvertUtils
+};
 
 class BigBrother extends PluginBase implements Listener{
 
@@ -81,7 +85,7 @@ class BigBrother extends PluginBase implements Listener{
 		}
 
 		if($enable){
-			if(Info::CURRENT_PROTOCOL === 274){
+			if(ProtocolInfo::CURRENT_PROTOCOL === 274){
 				ConvertUtils::init();
 
 				$this->saveDefaultConfig();
@@ -89,18 +93,18 @@ class BigBrother extends PluginBase implements Listener{
 				$this->saveResource("openssl.cnf", false);
 				$this->reloadConfig();
 
-				$this->getLogger()->info("OS: ".php_uname());
-				$this->getLogger()->info("PHP version: ".PHP_VERSION);
+				$this->getLogger()->info("OS: " . php_uname());
+				$this->getLogger()->info("PHP version: " . PHP_VERSION);
 
-				$this->getLogger()->info("PMMP Server version: ".$this->getServer()->getVersion());
-				$this->getLogger()->info("PMMP API version: ".$this->getServer()->getApiVersion());
+				$this->getLogger()->info("PMMP Server version: " . $this->getServer()->getVersion());
+				$this->getLogger()->info("PMMP API version: " . $this->getServer()->getApiVersion());
 
-				if(!$this->isPhar() and is_dir($this->getFile().".git")){
+				if(!$this->isPhar() and is_dir($this->getFile() . ".git")){
 					$cwd = getcwd();
 					chdir($this->getFile());
 					@exec("git describe --tags --always --dirty", $revision, $retval);
 					if($retval == 0){
-						$this->getLogger()->info("BigBrother revision: ".$revision[0]);
+						$this->getLogger()->info("BigBrother revision: " . $revision[0]);
 					}
 					chdir($cwd);
 				}
@@ -109,13 +113,13 @@ class BigBrother extends PluginBase implements Listener{
 				switch($aes->getEngine()){
 					case AES::ENGINE_OPENSSL:
 						$this->getLogger()->info("Use openssl as AES encryption engine.");
-					break;
+						break;
 					case AES::ENGINE_MCRYPT:
 						$this->getLogger()->warning("Use obsolete mcrypt for AES encryption. Try to install openssl extension instead!!");
-					break;
+						break;
 					case AES::ENGINE_INTERNAL:
 						$this->getLogger()->warning("Use phpseclib internal engine for AES encryption, this may impact on performance. To improve them, try to install openssl extension.");
-					break;
+						break;
 				}
 
 				$this->rsa = new RSA();
@@ -123,10 +127,10 @@ class BigBrother extends PluginBase implements Listener{
 					case RSA::MODE_OPENSSL:
 						$this->rsa->configFile = $this->getDataFolder() . "openssl.cnf";
 						$this->getLogger()->info("Use openssl as RSA encryption engine.");
-					break;
+						break;
 					case RSA::MODE_INTERNAL:
 						$this->getLogger()->info("Use phpseclib internal engine for RSA encryption.");
-					break;
+						break;
 				}
 
 				if($aes->getEngine() === AES::ENGINE_OPENSSL or constant("CRYPT_RSA_MODE") === RSA::MODE_OPENSSL){
@@ -136,7 +140,7 @@ class BigBrother extends PluginBase implements Listener{
 					ob_end_clean();
 
 					foreach(array_map(null, $matches[1], $matches[2]) as $version){
-						$this->getLogger()->info("OpenSSL ".$version[0]." version: ".$version[1]);
+						$this->getLogger()->info("OpenSSL " . $version[0] . " version: " . $version[1]);
 					}
 				}
 
@@ -159,7 +163,7 @@ class BigBrother extends PluginBase implements Listener{
 					$this->rsa->loadKey($this->privateKey);
 				}
 
-				$this->getLogger()->info("Starting Minecraft: PC server on ".($this->getIp() === "0.0.0.0" ? "*" : $this->getIp()).":".$this->getPort()." version ".ServerManager::VERSION);
+				$this->getLogger()->info("Starting Minecraft: PC server on " . ($this->getIp() === "0.0.0.0" ? "*" : $this->getIp()) . ":" . $this->getPort() . " version " . ServerManager::VERSION);
 
 				$this->getServer()->getPluginManager()->registerEvents($this, $this);
 
@@ -167,8 +171,8 @@ class BigBrother extends PluginBase implements Listener{
 				$this->interface = new ProtocolInterface($this, $this->getServer(), $this->translator, $this->getConfig()->get("network-compression-threshold"));
 				$this->getServer()->getNetwork()->registerInterface($this->interface);
 			}else{
-				$this->getLogger()->critical("Couldn't find a protocol translator for #".Info::CURRENT_PROTOCOL .", disabling plugin");
-				$this->getPluginLoader()->disablePlugin($this);
+				$this->getLogger()->critical("Couldn't find a protocol translator for #" . ProtocolInfo::CURRENT_PROTOCOL . ", disabling plugin");
+				$this->getServer()->getPluginManager()->disablePlugin($this);
 			}
 		}
 	}
@@ -213,6 +217,7 @@ class BigBrother extends PluginBase implements Listener{
 
 	/**
 	 * @param string $cipher cipher text
+	 *
 	 * @return string plain text
 	 */
 	public function decryptBinary(string $cipher) : string{
@@ -290,6 +295,7 @@ class BigBrother extends PluginBase implements Listener{
 	 * @param string|null $message
 	 * @param int         $type
 	 * @param array|null  $parameters
+	 *
 	 * @return string
 	 */
 	public static function toJSON(?string $message, int $type = 1, ?array $parameters = []) : string{
@@ -309,9 +315,9 @@ class BigBrother extends PluginBase implements Listener{
 					$result["with"][] = ["text" => substr($message, 1, strpos($message, ":") - 1)];
 
 					if($message === "[CONSOLE: Reload complete.]" or $message === "[CONSOLE: Reloading server...]"){//blame pmmp
-						$result["with"][] = ["translate" => substr(substr($message, strpos($message, ":") + 2), 0, - 1), "color" => "yellow"];
+						$result["with"][] = ["translate" => substr(substr($message, strpos($message, ":") + 2), 0, -1), "color" => "yellow"];
 					}else{
-						$result["with"][] = ["translate" => substr(substr($message, strpos($message, ":") + 2), 0, - 1)];
+						$result["with"][] = ["translate" => substr(substr($message, strpos($message, ":") + 2), 0, -1)];
 					}
 
 					$with = &$result["with"][1];
@@ -328,7 +334,7 @@ class BigBrother extends PluginBase implements Listener{
 						$with["with"][] = ["text" => $parameter];
 					}
 				}
-			break;
+				break;
 			case TextPacket::TYPE_POPUP:
 			case TextPacket::TYPE_TIP://Just to be sure
 				if(isset($result["text"])){
@@ -338,7 +344,7 @@ class BigBrother extends PluginBase implements Listener{
 				if(isset($result["extra"])){
 					unset($result["extra"]);
 				}
-			break;
+				break;
 		}
 
 		if(isset($result["extra"])){

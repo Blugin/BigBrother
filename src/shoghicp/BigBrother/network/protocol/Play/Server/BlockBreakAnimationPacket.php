@@ -32,15 +32,12 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class BlockBreakAnimationPacket extends OutboundPacket{
-
 	/** @var int */
 	public $eid;
+
 	/** @var int */
-	public $x;
-	/** @var int */
-	public $y;
-	/** @var int */
-	public $z;
+	public $x, $y, $z;
+
 	/** @var int */
 	public $destroyStage;
 

@@ -29,53 +29,33 @@ declare(strict_types=1);
 
 namespace shoghicp\BigBrother\network;
 
+use pocketmine\{
+	Player, Server
+};
 use pocketmine\network\mcpe\protocol\DataPacket;
-use pocketmine\network\SourceInterface;
-use pocketmine\Server;
-use pocketmine\Player;
+use pocketmine\network\NetworkInterface;
 use pocketmine\utils\MainLogger;
-use shoghicp\BigBrother\BigBrother;
-use shoghicp\BigBrother\DesktopPlayer;
-use shoghicp\BigBrother\network\protocol\Login\EncryptionResponsePacket;
-use shoghicp\BigBrother\network\protocol\Login\LoginStartPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\AdvancementTabPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\EnchantItemPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\TeleportConfirmPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\AnimatePacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\ConfirmTransactionPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\CraftRecipeRequestPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\CraftingBookDataPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\ClickWindowPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\ClientSettingsPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\ClientStatusPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\CreativeInventoryActionPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\EntityActionPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PlayerAbilitiesPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\ChatPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\CloseWindowPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\HeldItemChangePacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\KeepAlivePacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PlayerBlockPlacementPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PlayerDiggingPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PlayerLookPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PlayerPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PlayerPositionAndLookPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PlayerPositionPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\PluginMessagePacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\TabCompletePacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\UpdateSignPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\UseEntityPacket;
-use shoghicp\BigBrother\network\protocol\Play\Client\UseItemPacket;
+use shoghicp\BigBrother\{
+	BigBrother, DesktopPlayer
+};
+use shoghicp\BigBrother\network\protocol\Login\{
+	EncryptionResponsePacket, LoginStartPacket
+};
+use shoghicp\BigBrother\network\protocol\Play\Client\{
+	AdvancementTabPacket, AnimatePacket, ChatPacket, ClickWindowPacket, ClientSettingsPacket, ClientStatusPacket, CloseWindowPacket, ConfirmTransactionPacket, CraftingBookDataPacket, CraftRecipeRequestPacket, CreativeInventoryActionPacket, EnchantItemPacket, EntityActionPacket, HeldItemChangePacket, KeepAlivePacket, PlayerAbilitiesPacket, PlayerBlockPlacementPacket, PlayerDiggingPacket, PlayerLookPacket, PlayerPacket, PlayerPositionAndLookPacket, PlayerPositionPacket, PluginMessagePacket, TabCompletePacket, TeleportConfirmPacket, UpdateSignPacket, UseEntityPacket, UseItemPacket
+};
 use shoghicp\BigBrother\utils\Binary;
 
-class ProtocolInterface implements SourceInterface{
-
+class ProtocolInterface implements NetworkInterface{
 	/** @var BigBrother */
 	protected $plugin;
+
 	/** @var Server */
 	protected $server;
+
 	/** @var Translator */
 	protected $translator;
+
 	/** @var ServerThread */
 	protected $thread;
 
@@ -105,49 +85,50 @@ class ProtocolInterface implements SourceInterface{
 		$this->server = $server;
 		$this->translator = $translator;
 		$this->threshold = $threshold;
-		$this->thread = new ServerThread($server->getLogger(), $server->getLoader(), $plugin->getPort(), $plugin->getIp(), $plugin->getMotd(), $plugin->getDataFolder()."server-icon.png", false);
+		$this->thread = new ServerThread($server->getLogger(), $server->getLoader(), $plugin->getPort(), $plugin->getIp(), $plugin->getMotd(), $plugin->getDataFolder() . "server-icon.png", false);
 		$this->sessions = new \SplObjectStorage();
 	}
 
 	/**
 	 * @override
 	 */
-        public function start(): void{
-	  $this->thread->start();
+	public function start() : void{
+		$this->thread->start();
 	}
 
 	/**
 	 * @override
 	 */
-	public function emergencyShutdown(): void{
+	public function emergencyShutdown() : void{
 		$this->thread->pushMainToThreadPacket(chr(ServerManager::PACKET_EMERGENCY_SHUTDOWN));
 	}
 
 	/**
 	 * @override
 	 */
-	public function shutdown(): void{
+	public function shutdown() : void{
 		$this->thread->pushMainToThreadPacket(chr(ServerManager::PACKET_SHUTDOWN));
 	}
 
 	/**
 	 * @param string $name
+	 *
 	 * @override
 	 */
-	public function setName(string $name): void{
+	public function setName(string $name) : void{
 		$info = $this->plugin->getServer()->getQueryInformation();
 		$value = [
 			"MaxPlayers" => $info->getMaxPlayerCount(),
 			"OnlinePlayers" => $info->getPlayerCount(),
 		];
-		$buffer = chr(ServerManager::PACKET_SET_OPTION).chr(strlen("name"))."name".json_encode($value);
+		$buffer = chr(ServerManager::PACKET_SET_OPTION) . chr(strlen("name")) . "name" . json_encode($value);
 		$this->thread->pushMainToThreadPacket($buffer);
 	}
 
 	/**
 	 * @param int $identifier
 	 */
-	public function closeSession(int $identifier): void{
+	public function closeSession(int $identifier) : void{
 		if(isset($this->sessionsPlayers[$identifier])){
 			$player = $this->sessionsPlayers[$identifier];
 			unset($this->sessionsPlayers[$identifier]);
@@ -158,9 +139,10 @@ class ProtocolInterface implements SourceInterface{
 	/**
 	 * @param Player $player
 	 * @param string $reason
+	 *
 	 * @override
 	 */
-	public function close(Player $player, string $reason = "unknown reason"): void{
+	public function close(Player $player, string $reason = "unknown reason") : void{
 		if(isset($this->sessions[$player])){
 			$identifier = $this->sessions[$player];
 			$this->sessions->detach($player);
@@ -173,11 +155,11 @@ class ProtocolInterface implements SourceInterface{
 	 * @param int    $target
 	 * @param Packet $packet
 	 */
-	protected function sendPacket(int $target, Packet $packet): void{
+	protected function sendPacket(int $target, Packet $packet) : void{
 		if(\pocketmine\DEBUG > 4){
 			$id = bin2hex(chr($packet->pid()));
 			if($id !== "1f"){
-				echo "[Send][Interface] 0x".bin2hex(chr($packet->pid()))."\n";
+				echo "[Send][Interface] 0x" . bin2hex(chr($packet->pid())) . "\n";
 			}
 		}
 
@@ -188,7 +170,7 @@ class ProtocolInterface implements SourceInterface{
 	/**
 	 * @param DesktopPlayer $player
 	 */
-	public function setCompression(DesktopPlayer $player): void{
+	public function setCompression(DesktopPlayer $player) : void{
 		if(isset($this->sessions[$player])){
 			$target = $this->sessions[$player];
 			$data = chr(ServerManager::PACKET_SET_COMPRESSION) . Binary::writeInt($target) . Binary::writeInt($this->threshold);
@@ -200,7 +182,7 @@ class ProtocolInterface implements SourceInterface{
 	 * @param DesktopPlayer $player
 	 * @param string        $secret
 	 */
-	public function enableEncryption(DesktopPlayer $player, string $secret): void{
+	public function enableEncryption(DesktopPlayer $player, string $secret) : void{
 		if(isset($this->sessions[$player])){
 			$target = $this->sessions[$player];
 			$data = chr(ServerManager::PACKET_ENABLE_ENCRYPTION) . Binary::writeInt($target) . $secret;
@@ -212,7 +194,7 @@ class ProtocolInterface implements SourceInterface{
 	 * @param DesktopPlayer $player
 	 * @param Packet        $packet
 	 */
-	public function putRawPacket(DesktopPlayer $player, Packet $packet): void{
+	public function putRawPacket(DesktopPlayer $player, Packet $packet) : void{
 		if(isset($this->sessions[$player])){
 			$target = $this->sessions[$player];
 			$this->sendPacket($target, $packet);
@@ -254,7 +236,7 @@ class ProtocolInterface implements SourceInterface{
 	 * @param DesktopPlayer $player
 	 * @param Packet        $packet
 	 */
-	protected function receivePacket(DesktopPlayer $player, Packet $packet): void{
+	protected function receivePacket(DesktopPlayer $player, Packet $packet) : void{
 		$packets = $this->translator->interfaceToServer($player, $packet);
 		if($packets !== null){
 			if(is_array($packets)){
@@ -271,11 +253,11 @@ class ProtocolInterface implements SourceInterface{
 	 * @param DesktopPlayer $player
 	 * @param string        $payload
 	 */
-	protected function handlePacket(DesktopPlayer $player, string $payload){
+	protected function handlePacket(DesktopPlayer $player, string $payload) : void{
 		if(\pocketmine\DEBUG > 4){
 			$id = bin2hex(chr(ord($payload{0})));
 			if($id !== "0b"){//KeepAlivePacket
-				echo "[Receive][Interface] 0x".bin2hex(chr(ord($payload{0})))."\n";
+				echo "[Receive][Interface] 0x" . bin2hex(chr(ord($payload{0}))) . "\n";
 			}
 		}
 
@@ -336,7 +318,7 @@ class ProtocolInterface implements SourceInterface{
 					break;
 				case InboundPacket::CRAFT_RECIPE_REQUEST_PACKET:
 					$pk = new CraftRecipeRequestPacket();
-				break;
+					break;
 				case InboundPacket::PLAYER_ABILITIES_PACKET:
 					$pk = new PlayerAbilitiesPacket();
 					break;
@@ -372,7 +354,7 @@ class ProtocolInterface implements SourceInterface{
 					break;
 				default:
 					if(\pocketmine\DEBUG > 4){
-						echo "[Receive][Interface] 0x".bin2hex(chr($pid))." Not implemented\n"; //Debug
+						echo "[Receive][Interface] 0x" . bin2hex(chr($pid)) . " Not implemented\n"; //Debug
 					}
 					return;
 			}
@@ -447,7 +429,6 @@ class ProtocolInterface implements SourceInterface{
 
 				$this->closeSession($id);
 			}
-
 		}
 	}
 }

@@ -32,17 +32,14 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class UnlockRecipesPacket extends OutboundPacket{
-
 	/** @var int */
 	public $actionID;
+
 	/** @var bool */
-	public $isCraftingBookOpen = false;
-	/** @var bool */
-	public $isFilteringCraftable = false;
+	public $isCraftingBookOpen = false, $isFilteringCraftable = false;
+
 	/** @var int[] */
-	public $recipes = [];
-	/** @var int[] */
-	public $extraRecipes = [];
+	public $recipes = [], $extraRecipes = [];
 
 	public function pid() : int{
 		return self::UNLOCK_RECIPES_PACKET;

@@ -29,170 +29,158 @@ declare(strict_types=1);
 
 namespace shoghicp\BigBrother\utils;
 
-use pocketmine\item\Item;
 use pocketmine\block\Block;
 use pocketmine\entity\Human;
 use pocketmine\entity\projectile\Projectile;
+use pocketmine\item\Item;
 use pocketmine\nbt\LittleEndianNBTStream;
 use pocketmine\nbt\NBT;
-use pocketmine\nbt\tag\ByteArrayTag;
-use pocketmine\nbt\tag\ByteTag;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\DoubleTag;
-use pocketmine\nbt\tag\FloatTag;
-use pocketmine\nbt\tag\IntArrayTag;
-use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\ListTag;
-use pocketmine\nbt\tag\LongTag;
-use pocketmine\nbt\tag\NamedTag;
-use pocketmine\nbt\tag\ShortTag;
-use pocketmine\nbt\tag\StringTag;
-use pocketmine\tile\Tile;
+use pocketmine\nbt\tag\{
+	ByteArrayTag, ByteTag, CompoundTag, DoubleTag, FloatTag, IntArrayTag, IntTag, ListTag, LongTag, NamedTag, ShortTag, StringTag
+};
 use pocketmine\timings\TimingsHandler;
-use pocketmine\utils\BinaryStream;
-use pocketmine\utils\Binary;
-use shoghicp\BigBrother\BigBrother;
+use pocketmine\utils\{
+	Binary, BinaryStream
+};
 
 class ConvertUtils{
 	/** @var TimingsHandler */
-	private static $timingConvertItem;
-	/** @var TimingsHandler */
-	private static $timingConvertBlock;
+	private static $timingConvertItem, $timingConvertBlock;
 
 	/** @var array */
 	private static $idlist = [
 		//************** ITEMS ***********//
-		[[325,   8], [326,   0]], //Water bucket,
-		[[325,  10], [327,   0]], //Lava bucket
-		[[325,   1], [335,   0]], //Milk bucket
-		[[450,   0], [449,   0]], //Totem of Undying
-		[[444,   0], [443,   0]], //Elytra
-		[[443,   0], [422,   0]], //Minecart with Command Block
-		[[333,   1], [444,   0]], //Spruce Boat
-		[[333,   2], [445,   0]], //Birch Boat
-		[[333,   3], [446,   0]], //Jungle Boat
-		[[333,   4], [447,   0]], //Acacia Boat
-		[[333,   5], [448,   0]], //Dark Oak Boat
-		[[445,   5], [448,   0]], //Dark Oak Boat
-		[[445,   0], [450,   0]], //Shulker Shell
-		[[125,  -1], [158,  -1]], //Dropper
-		[[410,  -1], [154,  -1]], //Hopper
-		[[425,  -1], [416,  -1]], //Armor Stand
-		[[446,  -1], [425,  -1]], //Banner
-		[[466,   0], [322,   1]], //Enchanted golden apple
+		[[325, 8], [326, 0]], //Water bucket,
+		[[325, 10], [327, 0]], //Lava bucket
+		[[325, 1], [335, 0]], //Milk bucket
+		[[450, 0], [449, 0]], //Totem of Undying
+		[[444, 0], [443, 0]], //Elytra
+		[[443, 0], [422, 0]], //Minecart with Command Block
+		[[333, 1], [444, 0]], //Spruce Boat
+		[[333, 2], [445, 0]], //Birch Boat
+		[[333, 3], [446, 0]], //Jungle Boat
+		[[333, 4], [447, 0]], //Acacia Boat
+		[[333, 5], [448, 0]], //Dark Oak Boat
+		[[445, 5], [448, 0]], //Dark Oak Boat
+		[[445, 0], [450, 0]], //Shulker Shell
+		[[125, -1], [158, -1]], //Dropper
+		[[410, -1], [154, -1]], //Hopper
+		[[425, -1], [416, -1]], //Armor Stand
+		[[446, -1], [425, -1]], //Banner
+		[[466, 0], [322, 1]], //Enchanted golden apple
 		//************ Discs ***********//
 		//NOTE: it's the real value, no joke
-		[[500,   0], [2256,  0]],
-		[[501,   0], [2257,  0]],
-		[[502,   0], [2258,  0]],
-		[[503,   0], [2258,  0]],
-		[[504,   0], [2260,  0]],
-		[[505,   0], [2261,  0]],
-		[[506,   0], [2262,  0]],
-		[[507,   0], [2263,  0]],
-		[[508,   0], [2264,  0]],
-		[[509,   0], [2265,  0]],
-		[[510,   0], [2266,  0]],
-		[[511,   0], [2267,  0]],
+		[[500, 0], [2256, 0]],
+		[[501, 0], [2257, 0]],
+		[[502, 0], [2258, 0]],
+		[[503, 0], [2258, 0]],
+		[[504, 0], [2260, 0]],
+		[[505, 0], [2261, 0]],
+		[[506, 0], [2262, 0]],
+		[[507, 0], [2263, 0]],
+		[[508, 0], [2264, 0]],
+		[[509, 0], [2265, 0]],
+		[[510, 0], [2266, 0]],
+		[[511, 0], [2267, 0]],
 		//******** Tipped Arrows *******//
 		/*
 		[[262,  -1], [440,  -1]], //TODO
 		*/
 		//*******************************//
-		[[458,   0], [435,   0]], //Beetroot Seeds
-		[[459,   0], [436,   0]], //Beetroot Soup
-		[[460,   0], [349,   1]], //Raw Salmon
-		[[461,   0], [349,   2]], //Clownfish
-		[[462,   0], [350,   3]], //Pufferfish
-		[[463,   0], [350,   1]], //Cooked Salmon
-		[[466,   0], [422,   1]], //Enchanted Golden Apple
+		[[458, 0], [435, 0]], //Beetroot Seeds
+		[[459, 0], [436, 0]], //Beetroot Soup
+		[[460, 0], [349, 1]], //Raw Salmon
+		[[461, 0], [349, 2]], //Clownfish
+		[[462, 0], [350, 3]], //Pufferfish
+		[[463, 0], [350, 1]], //Cooked Salmon
+		[[466, 0], [422, 1]], //Enchanted Golden Apple
 		//********************************//
 
 
 		//************ BLOCKS *************//
-		[[243,   0], [  3,   2]], //Podzol
-		[[198,  -1], [208,  -1]], //Grass Path
-		[[247,  -1], [ 49,   0]], //Nether Reactor core is now a obsidian
-		[[157,  -1], [125,  -1]], //Double slab
-		[[158,  -1], [126,  -1]], //Stairs
+		[[243, 0], [3, 2]], //Podzol
+		[[198, -1], [208, -1]], //Grass Path
+		[[247, -1], [49, 0]], //Nether Reactor core is now a obsidian
+		[[157, -1], [125, -1]], //Double slab
+		[[158, -1], [126, -1]], //Stairs
 		//******** End Rod ********//
-		[[208,   0], [198,   0]],
-		[[208,   1], [198,   1]],
-		[[208,   2], [198,   3]],
-		[[208,   3], [198,   2]],
-		[[208,   4], [198,   4]],
-		[[208,   5], [198,   5]],
+		[[208, 0], [198, 0]],
+		[[208, 1], [198, 1]],
+		[[208, 2], [198, 3]],
+		[[208, 3], [198, 2]],
+		[[208, 4], [198, 4]],
+		[[208, 5], [198, 5]],
 		//*************************//
-		[[241,  -1], [ 95,  -1]], //Stained Glass
-		[[182,   1], [205,   0]], //Purpur Slab
-		[[181,   1], [204,   0]], //Double Purpur Slab
-		[[ 95,   0], [166,   0]], //Extended Piston is now a barrier
-		[[ 43,   6], [ 43,   7]], //Double Quartz Slab
-		[[ 43,   7], [ 43,   6]], //Double Nether Brick Slab
-		[[ 44,   6], [ 44,   7]], //Quartz Slab
-		[[ 44,   7], [ 44,   6]], //Nether Brick Slab
-		[[ 44,  14], [ 44,  15]], //Upper Quartz Slab
-		[[ 44,  15], [ 44,  14]], //Upper Nether Brick Slab
-		[[155,  -1], [155,   0]], //Quartz Block | TODO: convert meta
-		[[168,   1], [168,   2]], //Dark Prismarine
-		[[168,   2], [168,   1]], //Prismarine Bricks
-		[[201,   1], [201,   0]], //Unused Purpur Block
-		[[201,   2], [202,   0]], //Pillar Purpur Block
-		[[ 85,   1], [188,   0]], //Spruce Fence
-		[[ 85,   2], [189,   0]], //Birch Fence
-		[[ 85,   3], [190,   0]], //Jungle Fence
-		[[ 85,   4], [192,   0]], //Acacia Fence
-		[[ 85,   5], [191,   0]], //Dark Oak Fence
-		[[240,   0], [199,   0]], //Chorus Plant
-		[[199,  -1], [ 68,  -1]], //Item Frame is temporaly a standing sign | TODO: Convert Item Frame block to its entity. #blamemojang
-		[[252,  -1], [255,  -1]], //Structures Block
-		[[236,  -1], [251,  -1]], //Concretes
-		[[237,  -1], [252,  -1]], //Concretes Powder
+		[[241, -1], [95, -1]], //Stained Glass
+		[[182, 1], [205, 0]], //Purpur Slab
+		[[181, 1], [204, 0]], //Double Purpur Slab
+		[[95, 0], [166, 0]], //Extended Piston is now a barrier
+		[[43, 6], [43, 7]], //Double Quartz Slab
+		[[43, 7], [43, 6]], //Double Nether Brick Slab
+		[[44, 6], [44, 7]], //Quartz Slab
+		[[44, 7], [44, 6]], //Nether Brick Slab
+		[[44, 14], [44, 15]], //Upper Quartz Slab
+		[[44, 15], [44, 14]], //Upper Nether Brick Slab
+		[[155, -1], [155, 0]], //Quartz Block | TODO: convert meta
+		[[168, 1], [168, 2]], //Dark Prismarine
+		[[168, 2], [168, 1]], //Prismarine Bricks
+		[[201, 1], [201, 0]], //Unused Purpur Block
+		[[201, 2], [202, 0]], //Pillar Purpur Block
+		[[85, 1], [188, 0]], //Spruce Fence
+		[[85, 2], [189, 0]], //Birch Fence
+		[[85, 3], [190, 0]], //Jungle Fence
+		[[85, 4], [192, 0]], //Acacia Fence
+		[[85, 5], [191, 0]], //Dark Oak Fence
+		[[240, 0], [199, 0]], //Chorus Plant
+		[[199, -1], [68, -1]], //Item Frame is temporaly a standing sign | TODO: Convert Item Frame block to its entity. #blamemojang
+		[[252, -1], [255, -1]], //Structures Block
+		[[236, -1], [251, -1]], //Concretes
+		[[237, -1], [252, -1]], //Concretes Powder
 		//******** Glazed Terracota ********//
-		[[220,   0], [235,   0]],
-		[[221,   0], [236,   0]],
-		[[222,   0], [237,   0]],
-		[[223,   0], [238,   0]],
-		[[224,   0], [239,   0]],
-		[[225,   0], [240,   0]],
-		[[226,   0], [241,   0]],
-		[[227,   0], [242,   0]],
-		[[228,   0], [243,   0]],
-		[[229,   0], [244,   0]],
-		[[219,   0], [245,   0]],
-		[[231,   0], [246,   0]],
-		[[232,   0], [247,   0]],
-		[[233,   0], [248,   0]],
-		[[234,   0], [249,   0]],
-		[[235,   0], [250,   0]],
+		[[220, 0], [235, 0]],
+		[[221, 0], [236, 0]],
+		[[222, 0], [237, 0]],
+		[[223, 0], [238, 0]],
+		[[224, 0], [239, 0]],
+		[[225, 0], [240, 0]],
+		[[226, 0], [241, 0]],
+		[[227, 0], [242, 0]],
+		[[228, 0], [243, 0]],
+		[[229, 0], [244, 0]],
+		[[219, 0], [245, 0]],
+		[[231, 0], [246, 0]],
+		[[232, 0], [247, 0]],
+		[[233, 0], [248, 0]],
+		[[234, 0], [249, 0]],
+		[[235, 0], [250, 0]],
 		//*************************//
-		[[251,  -1], [218,  -1]], //Observer
+		[[251, -1], [218, -1]], //Observer
 		//******** Shulker Box ********//
 		//dude mojang, whyy
-		[[205,  -1], [229,  -1]], //Undyed
-		[[218,   0], [219,   0]],
-		[[218,   1], [220,   0]],
-		[[218,   2], [221,   0]],
-		[[218,   3], [222,   0]],
-		[[218,   4], [223,   0]],
-		[[218,   5], [224,   0]],
-		[[218,   6], [225,   0]],
-		[[218,   7], [226,   0]],
-		[[218,   8], [227,   0]],
-		[[218,   9], [228,   0]],
-		[[218,  10], [229,   0]],
-		[[218,  11], [230,   0]],
-		[[218,  12], [231,   0]],
-		[[218,  13], [232,   0]],
-		[[218,  14], [233,   0]],
-		[[218,  15], [234,   0]],
+		[[205, -1], [229, -1]], //Undyed
+		[[218, 0], [219, 0]],
+		[[218, 1], [220, 0]],
+		[[218, 2], [221, 0]],
+		[[218, 3], [222, 0]],
+		[[218, 4], [223, 0]],
+		[[218, 5], [224, 0]],
+		[[218, 6], [225, 0]],
+		[[218, 7], [226, 0]],
+		[[218, 8], [227, 0]],
+		[[218, 9], [228, 0]],
+		[[218, 10], [229, 0]],
+		[[218, 11], [230, 0]],
+		[[218, 12], [231, 0]],
+		[[218, 13], [232, 0]],
+		[[218, 14], [233, 0]],
+		[[218, 15], [234, 0]],
 		//*************************//
-		[[188,  -1], [210,  -1]], //Repeating Command Block
-		[[189,  -1], [211,  -1]], //Chain Command Block
-		[[244,  -1], [207,  -1]], //Beetroot Block
-		[[207,  -1], [212,  -1]], //Frosted Ice
-		[[  4,  -1], [  4,  -1]], //For Stonecutter
-		[[245,  -1], [  4,  -1]] //Stonecutter - To avoid problems, it's now a stone block
+		[[188, -1], [210, -1]], //Repeating Command Block
+		[[189, -1], [211, -1]], //Chain Command Block
+		[[244, -1], [207, -1]], //Beetroot Block
+		[[207, -1], [212, -1]], //Frosted Ice
+		[[4, -1], [4, -1]], //For Stonecutter
+		[[245, -1], [4, -1]] //Stonecutter - To avoid problems, it's now a stone block
 		//******************************//
 		/*
 		[[  P  E  ], [  P  C  ]],
@@ -278,8 +266,9 @@ class ConvertUtils{
 	}
 
 	/**
-	 * @param NamedTag  $nbt
-	 * @param bool $isListTag
+	 * @param NamedTag $nbt
+	 * @param bool     $isListTag
+	 *
 	 * @return string converted nbt tag data
 	 */
 	public static function convertNBTDataFromPEtoPC(NamedTag $nbt, $isListTag = false) : string{
@@ -302,35 +291,35 @@ class ConvertUtils{
 				}
 
 				$stream->putByte(0);
-			break;
+				break;
 			case NBT::TAG_End: //No named tag
-			break;
+				break;
 			case NBT::TAG_Byte:
 				$stream->putByte($nbt->getValue());
-			break;
+				break;
 			case NBT::TAG_Short:
 				$stream->putShort($nbt->getValue());
-			break;
+				break;
 			case NBT::TAG_Int:
 				$stream->putInt($nbt->getValue());
-			break;
+				break;
 			case NBT::TAG_Long:
 				$stream->putLong($nbt->getValue());
-			break;
+				break;
 			case NBT::TAG_Float:
 				$stream->putFloat($nbt->getValue());
-			break;
+				break;
 			case NBT::TAG_Double:
 				$stream->put(Binary::writeDouble($nbt->getValue()));
-			break;
+				break;
 			case NBT::TAG_ByteArray:
 				$stream->putInt(strlen($nbt->getValue()));
 				$stream->put($nbt->getValue());
-			break;
+				break;
 			case NBT::TAG_String:
 				$stream->putShort(strlen($nbt->getValue()));
 				$stream->put($nbt->getValue());
-			break;
+				break;
 			case NBT::TAG_List:
 				assert($nbt instanceof ListTag);
 
@@ -351,13 +340,12 @@ class ConvertUtils{
 				foreach($nbt as $tag){
 					$stream->put(self::convertNBTDataFromPEtoPC($tag, true));
 				}
-			break;
+				break;
 			case NBT::TAG_IntArray:
 				$stream->putInt(count($nbt->getValue()));
 				$stream->put(pack("N*", ...$nbt->getValue()));
-			break;
+				break;
 		}
-
 
 
 		return $stream->getBuffer();
@@ -365,8 +353,9 @@ class ConvertUtils{
 
 	/**
 	 * @param string $buffer
-	 * @param bool 	 $isListTag
-	 * @param int 	 $listTagId
+	 * @param bool   $isListTag
+	 * @param int    $listTagId
+	 *
 	 * @return CompoundTag|NamedTag|null
 	 */
 	public static function convertNBTDataFromPCtoPE(string $buffer, $isListTag = false, $listTagId = NBT::TAG_End) : ?NamedTag{
@@ -386,31 +375,31 @@ class ConvertUtils{
 		switch($type){
 			case NBT::TAG_End://unused
 				$nbt = null;
-			break;
+				break;
 			case NBT::TAG_Byte:
 				$nbt = new ByteTag($name, $stream->getByte());
-			break;
+				break;
 			case NBT::TAG_Short:
 				$nbt = new ShortTag($name, $stream->getShort());
-			break;
+				break;
 			case NBT::TAG_Int:
 				$nbt = new IntTag($name, $stream->getInt());
-			break;
+				break;
 			case NBT::TAG_Long:
 				$nbt = new LongTag($name, $stream->getLong());
-			break;
+				break;
 			case NBT::TAG_Float:
 				$nbt = new FloatTag($name, $stream->getFloat());
-			break;
+				break;
 			case NBT::TAG_Double:
 				$nbt = new DoubleTag($name, Binary::readDouble($stream->get(8)));
-			break;
+				break;
 			case NBT::TAG_ByteArray:
 				$nbt = new ByteArrayTag($name, $stream->get($stream->getInt()));
-			break;
+				break;
 			case NBT::TAG_String:
 				$nbt = new StringTag($name, $stream->get($stream->getShort()));
-			break;
+				break;
 			case NBT::TAG_List:
 				$id = $stream->getByte();
 				$count = $stream->getInt();
@@ -430,7 +419,7 @@ class ConvertUtils{
 				}
 
 				$nbt = new ListTag($name, $tags, $id);
-			break;
+				break;
 			case NBT::TAG_Compound:
 				$tags = [];
 				do{
@@ -447,10 +436,10 @@ class ConvertUtils{
 				}while($tag !== null and !$stream->feof());
 
 				$nbt = new CompoundTag($name, $tags);
-			break;
+				break;
 			case NBT::TAG_IntArray:
-				$nbt = new IntArrayTag($name, unpack("N*", $stream->get($stream->getInt()*4)));
-			break;
+				$nbt = new IntArrayTag($name, unpack("N*", $stream->get($stream->getInt() * 4)));
+				break;
 		}
 
 		return $nbt;
@@ -475,7 +464,7 @@ class ConvertUtils{
 			case Item::PUMPKIN:
 			case Item::JACK_O_LANTERN:
 				$itemdamage = 0;
-			break;
+				break;
 			case Item::WRITABLE_BOOK:
 				if($iscomputer){
 					if($itemnbt !== ""){
@@ -491,10 +480,10 @@ class ConvertUtils{
 										switch($tag->getName()){
 											case "text":
 												$listTag[] = new StringTag("", $tag->getValue());
-											break;
+												break;
 											case "photoname":
 												$photoListTag[] = new StringTag("", $tag->getValue());
-											break;
+												break;
 										}
 									}
 								}
@@ -535,7 +524,7 @@ class ConvertUtils{
 						$itemnbt->setTag(new ListTag("pages", $listTag));
 					}
 				}
-			break;
+				break;
 			case Item::WRITTEN_BOOK:
 				if($iscomputer){
 					if($itemnbt !== ""){
@@ -551,10 +540,10 @@ class ConvertUtils{
 										switch($tag->getName()){
 											case "text":
 												$listTag[] = new StringTag("", $tag->getValue());
-											break;
+												break;
 											case "photoname":
 												$photoListTag[] = new StringTag("", $tag->getValue());
-											break;
+												break;
 										}
 									}
 								}
@@ -595,7 +584,7 @@ class ConvertUtils{
 						$itemnbt->setTag(new ListTag("pages", $listTag));
 					}
 				}
-			break;
+				break;
 			case Item::SPAWN_EGG:
 				if($iscomputer){
 					if($type = self::$spawnEggList[$itemdamage] ?? ""){
@@ -618,12 +607,14 @@ class ConvertUtils{
 					$itemdamage = self::$reverseSpawnEggList[$entitytag] ?? 0;
 					$itemnbt = "";
 				}
-			break;
+				break;
 			default:
 				if($iscomputer){
-					$src = 0; $dst = 1;
+					$src = 0;
+					$dst = 1;
 				}else{
-					$src = 1; $dst = 0;
+					$src = 1;
+					$dst = 0;
 				}
 
 				foreach(self::$idlistIndex[$src][$itemid] ?? [] as $convertitemdata){
@@ -641,7 +632,7 @@ class ConvertUtils{
 						break;
 					}
 				}
-			break;
+				break;
 		}
 
 		if($iscomputer){
@@ -658,7 +649,7 @@ class ConvertUtils{
 	 * else convert block data opposite way.
 	 *
 	 * @param bool $iscomputer
-	 * @param int  &$blockid to convert
+	 * @param int  &$blockid   to convert
 	 * @param int  &$blockdata to convert
 	 */
 	public static function convertBlockData(bool $iscomputer, int &$blockid, int &$blockdata) : void{
@@ -668,16 +659,18 @@ class ConvertUtils{
 			case Block::WOODEN_TRAPDOOR:
 			case Block::IRON_TRAPDOOR:
 				self::convertTrapdoor($blockdata);
-			break;
+				break;
 			case Block::STONE_BUTTON:
 			case Block::WOODEN_BUTTON:
 				self::convertButton($blockdata);
-			break;
+				break;
 			default:
 				if($iscomputer){
-					$src = 0; $dst = 1;
+					$src = 0;
+					$dst = 1;
 				}else{
-					$src = 1; $dst = 0;
+					$src = 1;
+					$dst = 0;
 				}
 
 				foreach(self::$idlistIndex[$src][$blockid] ?? [] as $convertblockdata){
@@ -693,7 +686,7 @@ class ConvertUtils{
 						break;
 					}
 				}
-			break;
+				break;
 		}
 
 		self::$timingConvertBlock->stopTiming();
@@ -701,6 +694,7 @@ class ConvertUtils{
 
 	/**
 	 * @param array $olddata
+	 *
 	 * @return array converted
 	 */
 	public static function convertPEToPCMetadata(array $olddata) : array{
@@ -744,22 +738,22 @@ class ConvertUtils{
 					}
 
 					$newdata[0] = [0, $flags];
-				break;
+					break;
 				case Human::DATA_AIR://Air
 					$newdata[1] = [1, $d[1]];
-				break;
+					break;
 				case Human::DATA_NAMETAG://Custom name
 					$newdata[2] = [3, str_replace("\n", "", $d[1])];//TODO
-				break;
+					break;
 				case Human::DATA_FUSE_LENGTH://TNT
 					$newdata[6] = [1, $d[1]];
-				break;
+					break;
 				case Human::DATA_POTION_COLOR:
 					$newdata[8] = [1, $d[1]];
-				break;
+					break;
 				case Human::DATA_POTION_AMBIENT:
 					$newdata[9] = [6, $d[1] ? true : false];
-				break;
+					break;
 				case Human::DATA_VARIANT:
 				case Human::DATA_PLAYER_FLAGS:
 				case Human::DATA_PLAYER_BED_POSITION:
@@ -771,10 +765,10 @@ class ConvertUtils{
 				case Human::DATA_BOUNDING_BOX_HEIGHT:
 				case Projectile::DATA_SHOOTER_ID:
 					//Unused
-				break;
+					break;
 				default:
-					echo "key: ".$bottom." Not implemented\n";
-				break;
+					echo "key: " . $bottom . " Not implemented\n";
+					break;
 				//TODO: add data type
 			}
 		}
@@ -830,19 +824,4 @@ class ConvertUtils{
 		$blockdata = (($blockdata >> 2) << 2) | $blockdata & 0x03;*/
 	}
 
-}
-
-
-class ComputerItem extends Item{
-	/**
-	 * @param int                $id
-	 * @param int                $meta
-	 * @param int                $count
-	 * @param CompoundTag|string $tag
-	 */
-	public function __construct(int $id = 0, int $meta = 0, int $count = 1, $tag = ""){
-		parent::__construct($id, $meta);
-		$this->setCount($count);
-		$this->setCompoundTag($tag);
-	}
 }

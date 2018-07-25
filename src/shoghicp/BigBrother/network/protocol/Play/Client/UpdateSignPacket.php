@@ -32,21 +32,11 @@ namespace shoghicp\BigBrother\network\protocol\Play\Client;
 use shoghicp\BigBrother\network\InboundPacket;
 
 class UpdateSignPacket extends InboundPacket{
+	/** @var int */
+	public $x, $y, $z;
 
-	/** @var int */
-	public $x;
-	/** @var int */
-	public $y;
-	/** @var int */
-	public $z;
 	/** @var string */
-	public $line1;
-	/** @var string */
-	public $line2;
-	/** @var string */
-	public $line3;
-	/** @var string */
-	public $line4;
+	public $line1, $line2, $line3, $line4;
 
 	public function pid() : int{
 		return self::UPDATE_SIGN_PACKET;

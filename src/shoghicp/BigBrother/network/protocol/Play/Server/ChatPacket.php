@@ -32,9 +32,9 @@ namespace shoghicp\BigBrother\network\protocol\Play\Server;
 use shoghicp\BigBrother\network\OutboundPacket;
 
 class ChatPacket extends OutboundPacket{
-
 	/** @var string */
 	public $message;
+
 	/** @var int */
 	public $position = 0; //0 = chat, 1 = system message, 2 = action bar
 
