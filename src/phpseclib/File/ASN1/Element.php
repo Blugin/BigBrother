@@ -23,25 +23,24 @@ namespace phpseclib\File\ASN1;
  * @author  Jim Wigginton <terrafrost@php.net>
  * @access  public
  */
-class Element
-{
-    /**
-     * Raw element value
-     *
-     * @var string
-     * @access private
-     */
-    var $element;
+class Element{
+	/**
+	 * Raw element value
+	 *
+	 * @var string
+	 * @access private
+	 */
+	var $element;
 
-    /**
-     * Constructor
-     *
-     * @param string $encoded
-     * @return \phpseclib\File\ASN1\Element
-     * @access public
-     */
-    function __construct($encoded)
-    {
-        $this->element = $encoded;
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param string $encoded
+	 *
+	 * @return \phpseclib\File\ASN1\Element
+	 * @access public
+	 */
+	function __construct($encoded){
+		$this->element = $encoded;
+	}
 }
