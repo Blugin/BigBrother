@@ -35,6 +35,7 @@ use pocketmine\{
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\NetworkInterface;
 use pocketmine\utils\MainLogger;
+use pocketmine\network\mcpe\NetworkSession;
 use shoghicp\BigBrother\{
 	BigBrother, DesktopPlayer
 };
@@ -210,13 +211,10 @@ class ProtocolInterface implements NetworkInterface{
 	 * @return int|null identifier if $needAck === false else null
 	 * @override
 	 */
-	public function putPacket(Player $player, DataPacket $packet, bool $needACK = false, bool $immediate = true) : ?int{
+	public function putPacket(NetworkSession $session, DataPacket $packet, bool $immediate = true) : ?int{
 		$id = 0;
-		if($needACK){
-			$id = $this->identifier++;
-			$this->identifiers[$id] = $player;
-		}
-		assert($player instanceof DesktopPlayer);
+		$player = ($RefectionNetworkSession = new \ReflectionObject($session))->setAccessible(true);
+		$player = $player->getValue($session);
 		$packets = $this->translator->serverToInterface($player, $packet);
 		if($packets !== null and $this->sessions->contains($player)){
 			$target = $this->sessions[$player];
