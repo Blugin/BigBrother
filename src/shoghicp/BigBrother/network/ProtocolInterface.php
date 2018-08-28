@@ -211,7 +211,7 @@ class ProtocolInterface implements NetworkInterface{
 	 * @return int|null identifier if $needAck === false else null
 	 * @override
 	 */
-	public function putPacket(NetworkSession $session, DataPacket $packet, bool $immediate = true) : void{
+	public function putPacket(NetworkSession $session, DataPacket $packet, string $payload, bool $immediate = true) : void{
 		$id = 0;
 		$player = ($RefectionNetworkSession = new \ReflectionObject($session))->setAccessible(true);
 		$player = $player->getValue($session);
